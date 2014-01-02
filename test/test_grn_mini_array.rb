@@ -148,6 +148,10 @@ class TestGrnMiniArray < MiniTest::Unit::TestCase
         end
         # p v.attributes
       end
+
+      # New member id is '4'
+      array << {text:"ddd", number:1}
+      assert_equal "ddd", array[4].text
     end
   end
 

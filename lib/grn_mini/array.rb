@@ -29,7 +29,7 @@ module GrnMini
       end
     end
 
-    def <<(hash)
+    def add(hash)
       if @grn.empty?
         hash.each do |key, value|
           column = key.to_s
@@ -50,6 +50,8 @@ module GrnMini
       
       @grn.add(hash)
     end
+
+    alias << add
 
     def select(query, options = {default_column: "text"})
       Results.new(@grn.select(query, options))

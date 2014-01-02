@@ -9,9 +9,10 @@ class TestGrnMiniArray < MiniTest::Unit::TestCase
 
   def test_add
     GrnMini::Array.tmpdb do |array|
-      array << {text:"aaa", number:1}
+      array.add(text:"aaa", number:1)
       assert_equal 1, array.size
 
+      # alias << add
       array << {text:"bbb", number:2}
       assert_equal 2, array.size
     end 

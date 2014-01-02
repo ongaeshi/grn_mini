@@ -48,10 +48,12 @@ class TestGrnMiniArray < MiniTest::Unit::TestCase
   def test_size
     GrnMini::Array.tmpdb do |array|
       assert_equal 0, array.size
+      assert_equal 0, array.length
       
       array << {text:"aaa", number:1}
       array << {text:"bbb", number:2}
       assert_equal 2, array.size
+      assert_equal 2, array.length
     end
   end
 

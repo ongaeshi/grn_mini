@@ -75,7 +75,7 @@ module GrnMini
       raise IdIsGreaterThanZero if id == 0
       @grn[id]
     end
-
+    
     def delete(id = nil, &block)
       if block_given?
         @grn.delete(&block)
@@ -111,7 +111,7 @@ module GrnMini
         @grn.expression.snippet([[open_tag, close_tag]])
       end
 
-      def snippet_html(open_tag = '<strong>', close_tag = '</strong>')
+      def snippet_html(open_tag = '<strong>', close_tag = "</strong>")
         @grn.expression.snippet([[open_tag, close_tag]], {html_escape: true})
       end
     end

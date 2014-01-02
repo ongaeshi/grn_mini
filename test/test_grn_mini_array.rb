@@ -183,4 +183,18 @@ class TestGrnMiniArray < MiniTest::Unit::TestCase
       assert_equal 3.5, results.first.float
     end
   end
+
+  def test_time_column
+    GrnMini::Array.tmpdb do |array| 
+      array << {text:"aaaa", timestamp: Time.new(2013)} # 2013-01-01
+      array << {text:"bbbb", timestamp: Time.new(2014)} # 2014-01-01
+      array << {text:"cccc", timestamp: Time.new(2015)} # 2015-01-01
+
+      assert_equal Time.new(2014), array[2].timestamp
+
+      results = array.select("timestamp:<=#{Time.new(2013,12).to_i}")
+      assert_equal 1, results.size
+      assert_equal Time.new(2013), results.first.timestamp
+    end    
+  end
 end

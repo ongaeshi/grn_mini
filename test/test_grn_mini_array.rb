@@ -170,4 +170,17 @@ class TestGrnMiniArray < MiniTest::Unit::TestCase
       assert_equal 1, array.first.number
     end
   end
+
+  def test_float_column
+    GrnMini::Array.tmpdb do |array| 
+      array << {text:"aaaa", float: 1.5}
+      array << {text:"bbbb", float: 2.5}
+      array << {text:"cccc", float: 3.5}
+
+      assert_equal 2.5, array[2].float
+
+      results = array.select("float:>2.6")
+      assert_equal 3.5, results.first.float
+    end
+  end
 end

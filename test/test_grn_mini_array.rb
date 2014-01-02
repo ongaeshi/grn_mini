@@ -151,4 +151,19 @@ class TestGrnMiniArray < MiniTest::Unit::TestCase
     end
   end
 
+  def test_delete_by_block
+    GrnMini::Array.tmpdb do |array|
+      array << {text:"bbb", number:2}
+      array << {text:"ccc", number:3}
+      array << {text:"aaa", number:1}
+
+      array.delete do |record|
+        record.number >= 2
+      end
+
+      assert_equal 1, array.size
+      assert_equal "aaa", array.first.text
+      assert_equal 1, array.first.number
+    end
+  end
 end

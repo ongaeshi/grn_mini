@@ -197,4 +197,16 @@ class TestGrnMiniArray < MiniTest::Unit::TestCase
       assert_equal Time.new(2013), results.first.timestamp
     end    
   end
+
+  def test_record_attributes
+    GrnMini::Array.tmpdb do |array| 
+      array << {text:"aaaa", int: 1}
+      array << {text:"bbbb", int: 2}
+      array << {text:"cccc", int: 3}
+
+      assert_equal({"_id"=>1, "int"=>1, "text"=>"aaaa"}, array[1].attributes)
+      assert_equal({"_id"=>2, "int"=>2, "text"=>"bbbb"}, array[2].attributes)
+      assert_equal({"_id"=>3, "int"=>3, "text"=>"cccc"}, array[3].attributes)
+    end
+  end
 end

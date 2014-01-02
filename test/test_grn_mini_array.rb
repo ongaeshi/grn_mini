@@ -86,4 +86,69 @@ class TestGrnMiniArray < MiniTest::Unit::TestCase
     end
   end
 
+  def test_read_by_id
+    GrnMini::Array.tmpdb do |array|
+      array << {text:"aaa", number:1}
+      array << {text:"bbb", number:2}
+      array << {text:"ccc", number:3}
+
+      # id > 0
+      assert_raises(GrnMini::Array::IdIsGreaterThanZero) { array[0] }
+
+      assert_equal "aaa", array[1].text
+      assert_equal "bbb", array[2].text
+      assert_equal "ccc", array[3].text
+
+      assert_equal nil, array[4].text
+    end
+  end
+
+  def test_write_by_id
+    GrnMini::Array.tmpdb do |array|
+      array << {text:"aaa", number:1}
+      array << {text:"bbb", number:2}
+      array << {text:"ccc", number:3}
+
+      assert_equal "bbb", array[2].text
+      assert_equal 2, array[2].number
+
+      array[2].text   = "BBB"
+      array[2].number = 22
+
+      assert_equal "BBB", array[2].text
+      assert_equal 22, array[2].number
+    end
+  end
+
+  def test_delete_by_id
+    GrnMini::Array.tmpdb do |array|
+      array << {text:"aaa", number:1}
+      array << {text:"bbb", number:2}
+      array << {text:"ccc", number:3}
+
+      assert_equal 3, array.size
+
+      array.delete(2)
+
+      assert_equal 2, array.size
+
+      # Deleted elements are not stuffed between
+      assert_equal nil, array[2].text
+      assert_equal 0, array[2].number
+
+      # Can be accessed properly if use GrnMini::Array#each
+      array.each_with_index do |v, index|
+        case index
+        when 0
+          assert_equal "aaa", v.text
+          assert_equal 1, v.number
+        when 1
+          assert_equal "ccc", v.text
+          assert_equal 3, v.number
+        end
+        # p v.attributes
+      end
+    end
+  end
+
 end

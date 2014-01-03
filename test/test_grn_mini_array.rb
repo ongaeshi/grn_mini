@@ -212,4 +212,14 @@ class TestGrnMiniArray < MiniTest::Unit::TestCase
       assert_equal({"_id"=>3, "int"=>3, "text"=>"cccc"}, array[3].attributes)
     end
   end
+
+  def test_assign_long_text_to_short_text
+    GrnMini::Array.tmpdb do |array| 
+      array << {filename:"a.txt"}
+      array << {filename:"a"*4095 + ".txt" } # Over 4095 byte (ShortText limit)
+
+      results = array.select("txt", default_column: "filename")
+      assert_equal 2, results.size 
+    end
+  end
 end

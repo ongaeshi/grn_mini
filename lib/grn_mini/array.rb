@@ -42,7 +42,7 @@ module GrnMini
           elsif value.is_a?(Numeric)
             @grn.define_column(column, "Int32")
           else
-            @grn.define_column(column, "Text")
+            @grn.define_column(column, "ShortText")
             @terms.define_index_column("array_#{column}", @grn, source: "Array.#{column}", with_position: true)
           end
         end

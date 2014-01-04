@@ -47,16 +47,14 @@ end
 
 ## Data Type
 
-
-
-```
+```ruby
 GrnMini::Array.tmpdb do |array|
-  array << {text: "aaa", filename: "a.txt", int : 1, float: 1.5, time: Time.at(1999)}
-  array << {text: "bbb", filename: "b.doc", int : 2, float: 2.5, time: Time.at(2000)}
+  array << {filename: "a.txt", int: 1, float: 1.5, time: Time.at(1999)}
+  array << {filename: "b.doc", int: 2, float: 2.5, time: Time.at(2000)}
 
   # ShortText
-  array[1].text     #=> "aaa"
-  array[1].filename #=> "text"
+  array[1].filename #=> "a.txt"
+  array[2].filename #=> "b.doc"
 
   # Int32
   array[1].int      #=> 1

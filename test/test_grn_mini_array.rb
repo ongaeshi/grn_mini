@@ -299,4 +299,31 @@ class TestGrnMiniArray < MiniTest::Unit::TestCase
       assert_equal ["doc", 1], [groups[1].key, groups[1].n_sub_records]
     end
   end
+
+  def test_text_snippet_from_selection_results
+    GrnMini::Array.tmpdb do |array|
+      array << {text: <<EOF, filename: "aaa.txt"}
+[1] This is a pen pep pea pek pet.
+------------------------------
+------------------------------
+------------------------------
+------------------------------
+[2] This is a pen pep pea pek pet.
+------------------------------
+------------------------------
+------------------------------
+------------------------------
+------------------------------
+EOF
+
+      results = array.select("This pen")
+      snippet = GrnMini::Util::text_snippet_from_selection_results(results)
+
+      record = results.first
+      segments = snippet.execute(record.text)
+      assert_equal 2, segments.size 
+      assert_match /\[1\] <<This>> is a <<pen>> pep pea pek pet./, segments[0]
+      assert_match /\[2\] <<This>> is a <<pen>> pep pea pek pet./, segments[1]
+    end
+  end
 end

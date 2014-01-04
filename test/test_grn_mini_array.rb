@@ -326,4 +326,22 @@ EOF
       assert_match /\[2\] <<This>> is a <<pen>> pep pea pek pet./, segments[1]
     end
   end
+
+  def test_html_snippet_from_selection_results
+    GrnMini::Array.tmpdb do |array|
+      array << {text: <<EOF, filename: "aaa.txt"}
+<html>
+  <div>This is a pen pep pea pek pet.</div>
+</html>
+EOF
+
+      results = array.select("This pen")
+      snippet = GrnMini::Util::html_snippet_from_selection_results(results)
+
+      record = results.first
+      segments = snippet.execute(record.text)
+      assert_equal 1, segments.size
+      assert_equal "&lt;html&gt;\n  &lt;div&gt;<strong>This</strong> is a <strong>pen</strong> pep pea pek pet.&lt;/div&gt;\n&lt;/html&gt;\n", segments.first
+    end
+  end
 end

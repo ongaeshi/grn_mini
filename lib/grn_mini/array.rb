@@ -54,7 +54,7 @@ module GrnMini
     alias << add
 
     def select(query, options = {default_column: "text"})
-      Results.new(@grn.select(query, options))
+      @grn.select(query, options)
     end
 
     def size
@@ -95,40 +95,6 @@ module GrnMini
 
     def group(key, options = {})
       @grn.group(key, options)
-    end
-
-    class Results
-      attr_reader :grn
-      include Enumerable
-
-      def initialize(grn)
-        @grn = grn
-      end
-
-      def each
-        @grn.each do |r| 
-          yield r
-        end
-      end
-
-      def size
-        @grn.size
-      end
-
-      def snippet(tags, options = nil)
-        @grn.expression.snippet(tags, options)
-      end
-
-      def snippet_text(open_tag = '<<', close_tag = ">>")
-        @grn.expression.snippet([[open_tag, close_tag]])
-      end
-
-      def snippet_html(open_tag = '<strong>', close_tag = "</strong>")
-        @grn.expression.snippet([[open_tag, close_tag]], {html_escape: true})
-      end
-    end
-
-    def clear
     end
   end
 end

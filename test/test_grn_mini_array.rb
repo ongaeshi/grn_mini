@@ -283,4 +283,19 @@ class TestGrnMiniArray < MiniTest::Unit::TestCase
     end
   end
 
+  def test_group_from_selection_results
+    GrnMini::Array.tmpdb do |array|
+      array << {text:"aaaa", suffix:"txt"}
+      array << {text:"aaaa", suffix:"doc"}
+      array << {text:"aaaa", suffix:"txt"}
+      array << {text:"cccc", suffix:"txt"}
+
+      results = array.select("aa")
+      groups = GrnMini::Util::group_with_sort(results, "suffix")
+
+      assert_equal 2, groups.size
+      assert_equal ["txt", 2], [groups[0].key, groups[0].n_sub_records]
+      assert_equal ["doc", 1], [groups[1].key, groups[1].n_sub_records]
+    end
+  end
 end

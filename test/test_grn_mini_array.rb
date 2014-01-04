@@ -245,4 +245,28 @@ class TestGrnMiniArray < MiniTest::Unit::TestCase
       assert_equal false, raw.support_sub_records?
     end
   end
+
+  def test_sort
+    GrnMini::Array.tmpdb do |array| 
+      array << {name:"Tanaka",  age: 11, height: 162.5}
+      array << {name:"Suzuki",  age: 31, height: 170.0}
+      array << {name:"Hayashi", age: 21, height: 175.4}
+      array << {name:"Suzuki",  age:  5, height: 110.0}
+
+      sorted_by_age = array.sort(["age"])
+      sorted_array = sorted_by_age.map { |r| {name: r.name, age: r.age}}
+      assert_equal [{:name=>"Suzuki", :age=>5},
+                    {:name=>"Tanaka", :age=>11},
+                    {:name=>"Hayashi", :age=>21},
+                    {:name=>"Suzuki", :age=>31}], sorted_array
+
+      sorted_by_combination = array.sort([{key: "name", order: :ascending}, {key: "age", order: :descending}])
+      sorted_array = sorted_by_combination.map { |r| {name: r.name, age: r.age}}
+      assert_equal [{:name=>"Hayashi", :age=>21},
+                    {:name=>"Suzuki", :age=>31},
+                    {:name=>"Suzuki", :age=>5},
+                    {:name=>"Tanaka", :age=>11}], sorted_array
+    end
+  end
+
 end

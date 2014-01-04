@@ -344,4 +344,31 @@ EOF
       assert_equal "&lt;html&gt;\n  &lt;div&gt;<strong>This</strong> is a <strong>pen</strong> pep pea pek pet.&lt;/div&gt;\n&lt;/html&gt;\n", segments.first
     end
   end
+
+  def test_paginate
+    GrnMini::Array.tmpdb do |array|
+      array << {text: "aaaa", filename: "1.txt"}
+      array << {text: "aaaa aaaa", filename: "2a.txt"}
+      array << {text: "aaaa aaaa aaaa", filename: "3.txt"}
+      array << {text: "aaaa aaaa", filename: "2b.txt"}
+      array << {text: "aaaa aaaa", filename: "2c.txt"}
+      array << {text: "aaaa aaaa", filename: "2d.txt"}
+
+      results = array.select("aaaa")
+
+      # page1
+      page_entries = results.paginate([["_score", :desc]], :page => 1, :size => 5)
+      assert_equal 6, page_entries.n_records
+      assert_equal 1, page_entries.start_offset
+      assert_equal 5, page_entries.end_offset
+      assert_equal "3.txt", page_entries.first.filename
+
+      # page2
+      page_entries = results.paginate([["_score", :desc]], :page => 2, :size => 5)
+      assert_equal 6, page_entries.n_records
+      assert_equal 6, page_entries.start_offset
+      assert_equal 6, page_entries.end_offset
+      assert_equal "1.txt", page_entries.first.filename
+    end
+  end
 end

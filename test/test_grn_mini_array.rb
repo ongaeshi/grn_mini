@@ -254,14 +254,15 @@ class TestGrnMiniArray < MiniTest::Unit::TestCase
       array << {name:"Suzuki",  age:  5, height: 110.0}
 
       sorted_by_age = array.sort(["age"])
-      sorted_array = sorted_by_age.map { |r| {name: r.name, age: r.age}}
+      sorted_array = sorted_by_age.map {|r| {name: r.name, age: r.age}}
       assert_equal [{:name=>"Suzuki", :age=>5},
                     {:name=>"Tanaka", :age=>11},
                     {:name=>"Hayashi", :age=>21},
                     {:name=>"Suzuki", :age=>31}], sorted_array
 
-      sorted_by_combination = array.sort([{key: "name", order: :ascending}, {key: "age", order: :descending}])
-      sorted_array = sorted_by_combination.map { |r| {name: r.name, age: r.age}}
+      sorted_by_combination = array.sort([{key: "name", order: :ascending},
+                                          {key: "age" , order: :descending}])
+      sorted_array = sorted_by_combination.map {|r| {name: r.name, age: r.age}}
       assert_equal [{:name=>"Hayashi", :age=>21},
                     {:name=>"Suzuki", :age=>31},
                     {:name=>"Suzuki", :age=>5},

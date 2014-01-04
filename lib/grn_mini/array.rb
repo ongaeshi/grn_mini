@@ -93,6 +93,10 @@ module GrnMini
       @grn.sort(keys, options)
     end
 
+    def group(key, options = {})
+      @grn.group(key, options)
+    end
+
     class Results
       attr_reader :grn
       include Enumerable

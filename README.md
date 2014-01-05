@@ -12,7 +12,7 @@ Groonga(Rroonga) wrapper for using easily. It is the KVS so easy to use.
 
 ```ruby
 require 'grn_mini'
-array = GrnMini::Array.new(File.join(dir, "test.db"))
+array = GrnMini::Array.new("test.db")
 ```
 
 ### Add the record with the number column and text column.
@@ -77,7 +77,7 @@ See also [8.4. Data type — Groonga documentation](http://groonga.org/docs/refe
 ```ruby
 require 'grn_mini'
 
-array = GrnMini::Array.new(File.join(dir, "test.db"))
+array = GrnMini::Array.new("test2.db")
 array << {name:"Tanaka",  age: 11, height: 162.5}
 array << {name:"Suzuki",  age: 31, height: 170.0}
 ```
@@ -96,7 +96,7 @@ record.age      #=> 11
 record.height   #=> 162.5
 
 # Groonga::Record#attributes is useful for debug
-record.attributes #=> {name: "Tanaka", age: 11, height: 162.5}
+record.attributes #=> {"_id"=>1, "age"=>11, "height"=>162.5, "name"=>"Tanaka"}
 ```
 
 ### Update
@@ -104,7 +104,7 @@ record.attributes #=> {name: "Tanaka", age: 11, height: 162.5}
 ```ruby
 array[2].name = "Hayashi"
 
-array[2].attributes #=> {name: "Hayashi", age: 31, height: 170.0}
+array[2].attributes #=> {"_id"=>2, "age"=>31, "height"=>170.0, "name"=>"Hayashi"}
 ```
 
 ### Delete
@@ -114,12 +114,12 @@ Delete by passing id.
 ```ruby
 array.delete(1)
 
-# It returns 'nil' when you access a deleted record
-array[1] #=> nil
+# It returns 'nil' value when you access a deleted record
+array[1].attributes     #=> {"_id"=>1, "age"=>0, "height"=>0.0, "name"=>nil}
 
 # Can't see deleted records if acess from Enumerable
-record = array.first # Return the record of id=2
-record.attributes    #=> {name: "Hayashi", age: 31, height: 170.0}
+array.first.id          #=> 2
+array.first.attributes  #=> {"_id"=>2, "age"=>31, "height"=>170.0, "name"=>"Hayashi"}
 ```
 
 It is also possible to pass the block.
@@ -135,7 +135,7 @@ GrnMini::Array.tmpdb do |array|
   end
 
   array.size             #=> 1
-  array.first.attributes #=> {name:"Suzuki",  age: 31, height: 170.0}
+  array.first.attributes #=> {"_id"=>2, "age"=>31, "height"=>170.0, "name"=>"Suzuki"}
 end
 ```
 
@@ -153,29 +153,23 @@ GrnMini::Array.tmpdb do |array|
   array << {text:"ccc", number:3}
 
   results = array.select("aaa")
-  results.size               #=> 1
-  results.first.attributes   #=> {text:"aaa", number:1}
+  results.map {|record| record.attributes} #=> [{"_id"=>1, "_key"=>{"_id"=>1, "number"=>1, "text"=>"aaa"}, "_score"=>1}]
 
   # AND
   results = array.select("bbb ccc")
-  results.size               #=> 1
-  results.first.attributes   #=> {text:"bbb ccc", number:2}
+  results.map {|record| record.attributes} #=> [{"_id"=>2, "_key"=>{"_id"=>3, "number"=>2, "text"=>"bbb ccc"}, "_score"=>2}]
 
   # Specify column
   results = array.select("bbb number:<10")
-  results.size               #=> 1
-  results.first.attributes   #=> {text:"bbb", number:2}
+  results.map {|record| record.attributes} #=> [{"_id"=>2, "_key"=>{"_id"=>3, "number"=>2, "text"=>"bbb ccc"}, "_score"=>2}]
 
   # AND, OR, Grouping
   results = array.select("bbb (number:<= 10 OR number:>=20)")
-  results.size               #=> 2
-  ra = results.to_a
-  ra[0].attributes           #=> {text:"bbb", number:20}
-  ra[1].attributes           #=> {text:"bbb ccc", number:2}
+  results.map {|record| record.attributes} #=> [{"_id"=>2, "_key"=>{"_id"=>3, "number"=>2, "text"=>"bbb ccc"}, "_score"=>2}, {"_id"=>4, "_key"=>{"_id"=>2, "number"=>20, "text"=>"bbb"}, "_score"=>2}]
 
   # NOT
   results = array.select("bbb - ccc")
-  results.map {|record| record.attributes}  #=> [{text:"bbb", number:20}, {text:"bbb", number:15}]
+  results.map {|record| record.attributes}  #=> [{"_id"=>1, "_key"=>{"_id"=>2, "number"=>20, "text"=>"bbb"}, "_score"=>1}, {"_id"=>3, "_key"=>{"_id"=>4, "number"=>15, "text"=>"bbb"}, "_score"=>1}]
 end 
 ```
 
@@ -184,16 +178,16 @@ Change `:default_column` to `:filename` column.
 ```ruby
 GrnMini::Array.tmpdb do |array|
   array << {text: "txt", filename:"a.txt"}
-  array << {text: "txt, "filename:"a.doc"}
+  array << {text: "txt", filename:"a.doc"}
   array << {text: "txt", filename:"a.rb"}
 
   # Specify column
   results = array.select("filename:@txt")
-  results.first.attributes  #=> {text: "txt", filename:"a.txt"}
+  results.first.attributes  #=> {"_id"=>1, "_key"=>{"_id"=>1, "filename"=>"a.txt", "text"=>"txt"}, "_score"=>1}
 
   # Change default_column
   results = array.select("txt", default_column: "filename")
-  results.first.attributes  #=> {text: "txt", filename:"a.txt"}
+  results.first.attributes  #=> {"_id"=>1, "_key"=>{"_id"=>1, "filename"=>"a.txt", "text"=>"txt"}, "_score"=>1}
 end
 ```
 

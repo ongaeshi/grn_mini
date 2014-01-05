@@ -86,16 +86,20 @@ array << {name:"Suzuki",  age: 31, height: 170.0}
 
 ```ruby
 record = array[1] # Read from id (> 0)
+record.id         #=> 1
+```
 
-# Get id
-record.id       #=> 1
+Access function with the same name as the column name
 
-# Access function with the same name as the column name
+```ruby
 record.name     #=> "Tanaka
 record.age      #=> 11
 record.height   #=> 162.5
+```
 
-# Groonga::Record#attributes is useful for debug
+Groonga::Record#attributes is useful for debug
+
+```ruby
 record.attributes #=> {"_id"=>1, "age"=>11, "height"=>162.5, "name"=>"Tanaka"}
 ```
 
@@ -103,7 +107,6 @@ record.attributes #=> {"_id"=>1, "age"=>11, "height"=>162.5, "name"=>"Tanaka"}
 
 ```ruby
 array[2].name = "Hayashi"
-
 array[2].attributes #=> {"_id"=>2, "age"=>31, "height"=>170.0, "name"=>"Hayashi"}
 ```
 
@@ -117,7 +120,7 @@ array.delete(1)
 # It returns 'nil' value when you access a deleted record
 array[1].attributes     #=> {"_id"=>1, "age"=>0, "height"=>0.0, "name"=>nil}
 
-# Can't see deleted records if acess from Enumerable
+# Can't see deleted records if access from Enumerable
 array.first.id          #=> 2
 array.first.attributes  #=> {"_id"=>2, "age"=>31, "height"=>170.0, "name"=>"Hayashi"}
 ```
@@ -205,6 +208,7 @@ GrnMini::Array.tmpdb do |array|
   array << {name:"Suzuki",  age:  5, height: 110.0}
 
   sorted = array.sort(["age"])
+
   sorted.map {|r| {name: r.name, age: r.age}}
     #=> [{:name=>"Suzuki",  :age=> 5},
     #    {:name=>"Tanaka",  :age=>11},
@@ -218,6 +222,7 @@ Combination sort.
 ```ruby
 sorted = array.sort([{key: "name", order: :ascending},
                      {key: "age" , order: :descending}])
+
 sorted.map {|r| {name: r.name, age: r.age}}
     #=> [{:name=>"Hayashi", :age=>21},
     #    {:name=>"Suzuki",  :age=>31},
@@ -316,7 +321,7 @@ See also [Groonga::Expression#snippet](http://ranguba.org/rroonga/en/Groonga/Exp
 
 ## Pagination
 
-#paginate is more convenient than #sort if you want a pagination.
+ #paginate is more convenient than #sort if you want a pagination.
 
 ```ruby
 GrnMini::Array.tmpdb do |array|
@@ -362,14 +367,3 @@ end
 
 See also [Groonga::Table#pagenate](http://ranguba.org/rroonga/en/Groonga/Table.html#paginate-instance_method)
 
-## Mini Search Engine
-
-## Use Raw Groonga Object
-
-## Contributing
-
-1. Fork it
-2. Create your feature branch (`git checkout -b my-new-feature`)
-3. Commit your changes (`git commit -am 'Add some feature'`)
-4. Push to the branch (`git push origin my-new-feature`)
-5. Create new Pull Request

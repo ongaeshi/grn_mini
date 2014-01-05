@@ -98,6 +98,9 @@ class TestGrnMiniArray < MiniTest::Unit::TestCase
       # id > 0
       assert_raises(GrnMini::Array::IdIsGreaterThanZero) { array[0] }
 
+      record = array[1]
+      assert_equal 1, record.id
+
       assert_equal "aaa", array[1].text
       assert_equal "bbb", array[2].text
       assert_equal "ccc", array[3].text

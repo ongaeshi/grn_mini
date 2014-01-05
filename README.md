@@ -227,7 +227,92 @@ sorted.map {|r| {name: r.name, age: r.age}}
 
 ## Grouping
 
+Drill down aka.
+
+```ruby
+GrnMini::Array.tmpdb do |array| 
+  array << {text:"aaaa.txt", suffix:"txt", type:1}
+  array << {text:"aaaa.doc", suffix:"doc", type:2}
+  array << {text:"aabb.txt", suffix:"txt", type:2}
+
+  groups = GrnMini::Util::group_with_sort(array, "suffix")
+
+  groups.size                               #=> 2
+  [groups[0].key, groups[0].n_sub_records]  #=> ["txt", 2]
+  [groups[1].key, groups[1].n_sub_records]  #=> ["doc", 1]
+end
+```
+
+Grouping from selection results.
+
+```ruby
+GrnMini::Array.tmpdb do |array|
+  array << {text:"aaaa", suffix:"txt"}
+  array << {text:"aaaa", suffix:"doc"}
+  array << {text:"aaaa", suffix:"txt"}
+  array << {text:"cccc", suffix:"txt"}
+
+  results = array.select("aa")
+  groups = GrnMini::Util::group_with_sort(results, "suffix")
+
+  groups.size                               #=> 2
+  [groups[0].key, groups[0].n_sub_records]  #=> ["txt", 2]
+  [groups[1].key, groups[1].n_sub_records]  #=> ["doc", 1]
+end
+```
+
 ## Snippet
+
+Display of keyword surrounding text. It is often used in search engine.
+Use `GrnMini::Util::text_snippet_from_selection_results`
+
+```ruby
+GrnMini::Array.tmpdb do |array|
+  array << {text: <<EOF, filename: "aaa.txt"}
+[1] This is a pen pep pea pek pet.
+------------------------------
+------------------------------
+------------------------------
+------------------------------
+[2] This is a pen pep pea pek pet.
+------------------------------
+------------------------------
+------------------------------
+------------------------------
+EOF
+
+  results = array.select("This pen")
+  snippet = GrnMini::Util::text_snippet_from_selection_results(results)
+
+  record = results.first
+  segments = snippet.execute(record.text)
+  segments.size #=> 2
+  segments[0]   #=> "[1] <<This>> is a <<pen>> pep pea pek pet.\n------------------------------\n------------------------------\n---"
+  segments[1]   #=> "--------\n------------------------------\n[2] <<This>> is a <<pen>> pep pea pek pet.\n-------------------------"
+end
+```
+
+`GrnMini::Util::html_snippet_from_selection_results` is HTML escaped.
+
+```ruby
+GrnMini::Array.tmpdb do |array|
+  array << {text: <<EOF, filename: "aaa.txt"}
+<html>
+  <div>This is a pen pep pea pek pet.</div>
+</html>
+EOF
+
+  results = array.select("This pen")
+  snippet = GrnMini::Util::html_snippet_from_selection_results(results, '<span class="strong">', '</span>') # Default value is '<strong>', '</strong>'
+
+  record = results.first
+  segments = snippet.execute(record.text)
+  segments.size   #=> 1
+  segments.first  #=> "&lt;html&gt;\n  &lt;div&gt;<span class=\"strong\">This</span> is a <span class=\"strong\">pen</span> pep pea pek pet.&lt;/div&gt;\n&lt;/html&gt;\n"
+end
+```
+
+See also [Groonga::Expression#snippet](http://ranguba.org/rroonga/en/Groonga/Expression.html#snippet-instance_method)
 
 ## Pagination
 

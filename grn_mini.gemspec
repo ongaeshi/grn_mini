@@ -8,8 +8,8 @@ Gem::Specification.new do |spec|
   spec.version       = GrnMini::VERSION
   spec.authors       = ["ongaeshi"]
   spec.email         = ["ongaeshi0621@gmail.com"]
-  spec.description   = %q{TODO: Write a gem description}
-  spec.summary       = %q{TODO: Write a gem summary}
+  spec.description   = %q{Groonga(Rroonga) wrapper for using easily.}
+  spec.summary       = %q{It is the KVS it's so easy to use.}
   spec.homepage      = ""
   spec.license       = "MIT"
 
@@ -21,4 +21,6 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "bundler", "~> 1.3"
   spec.add_development_dependency "rake"
   spec.add_development_dependency "minitest"
+
+  spec.add_dependency "rroonga"
 end

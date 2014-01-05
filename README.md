@@ -33,6 +33,14 @@ array << {text: "ccc", number: 3}
 array.size  #=> 3
 ```
 
+### Open an existing database
+
+```ruby
+require 'grn_mini'
+array = GrnMini::Array.new("test.db")
+array.size   #=> 3
+```
+
 ### Create a temporary database. (Useful for testing)
 
 ```ruby

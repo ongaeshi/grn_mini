@@ -195,6 +195,36 @@ See also [8.10.1. Query syntax](http://groonga.org/docs/reference/grn_expr/query
 
 ## Sort
 
+Specify column name to sort.
+
+```ruby
+GrnMini::Array.tmpdb do |array|
+  array << {name:"Tanaka",  age: 11, height: 162.5}
+  array << {name:"Suzuki",  age: 31, height: 170.0}
+  array << {name:"Hayashi", age: 21, height: 175.4}
+  array << {name:"Suzuki",  age:  5, height: 110.0}
+
+  sorted = array.sort(["age"])
+  sorted.map {|r| {name: r.name, age: r.age}}
+    #=> [{:name=>"Suzuki",  :age=> 5},
+    #    {:name=>"Tanaka",  :age=>11},
+    #    {:name=>"Hayashi", :age=>21},
+    #    {:name=>"Suzuki",  :age=>31}]
+end
+```
+
+Combination sort.
+
+```ruby
+sorted = array.sort([{key: "name", order: :ascending},
+                     {key: "age" , order: :descending}])
+sorted.map {|r| {name: r.name, age: r.age}}
+    #=> [{:name=>"Hayashi", :age=>21},
+    #    {:name=>"Suzuki",  :age=>31},
+    #    {:name=>"Suzuki",  :age=> 5},
+    #    {:name=>"Tanaka",  :age=>11}]
+```
+
 ## Grouping
 
 ## Snippet

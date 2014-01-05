@@ -1,3 +1,4 @@
+require 'grn_mini/util'
 require 'groonga'
 require 'tmpdir'
 

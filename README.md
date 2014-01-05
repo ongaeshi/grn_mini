@@ -141,6 +141,64 @@ end
 
 ## Search
 
+Use GrnMini::Array#select method.
+`:text` column is set to the `:default_column` implicitly.
+
+```ruby
+GrnMini::Array.tmpdb do |array|
+  array << {text:"aaa", number:1}
+  array << {text:"bbb", number:20}
+  array << {text:"bbb ccc", number:2}
+  array << {text:"bbb", number:15}
+  array << {text:"ccc", number:3}
+
+  results = array.select("aaa")
+  results.size               #=> 1
+  results.first.attributes   #=> {text:"aaa", number:1}
+
+  # AND
+  results = array.select("bbb ccc")
+  results.size               #=> 1
+  results.first.attributes   #=> {text:"bbb ccc", number:2}
+
+  # Specify column
+  results = array.select("bbb number:<10")
+  results.size               #=> 1
+  results.first.attributes   #=> {text:"bbb", number:2}
+
+  # AND, OR, Grouping
+  results = array.select("bbb (number:<= 10 OR number:>=20)")
+  results.size               #=> 2
+  ra = results.to_a
+  ra[0].attributes           #=> {text:"bbb", number:20}
+  ra[1].attributes           #=> {text:"bbb ccc", number:2}
+
+  # NOT
+  results = array.select("bbb - ccc")
+  results.map {|record| record.attributes}  #=> [{text:"bbb", number:20}, {text:"bbb", number:15}]
+end 
+```
+
+Change `:default_column` to `:filename` column.
+
+```ruby
+GrnMini::Array.tmpdb do |array|
+  array << {text: "txt", filename:"a.txt"}
+  array << {text: "txt, "filename:"a.doc"}
+  array << {text: "txt", filename:"a.rb"}
+
+  # Specify column
+  results = array.select("filename:@txt")
+  results.first.attributes  #=> {text: "txt", filename:"a.txt"}
+
+  # Change default_column
+  results = array.select("txt", default_column: "filename")
+  results.first.attributes  #=> {text: "txt", filename:"a.txt"}
+end
+```
+
+See also [8.10.1. Query syntax](http://groonga.org/docs/reference/grn_expr/query_syntax.html), [Groonga::Table#select](http://ranguba.org/rroonga/en/Groonga/Table.html#select-instance_method)
+
 ## Sort
 
 ## Grouping

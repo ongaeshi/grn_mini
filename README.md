@@ -1,6 +1,8 @@
 # GrnMini
 
-Groonga(Rroonga) wrapper for using easily. It is the KVS so easy to use.
+Groonga(Rroonga) wrapper for use as the KVS.
+
+Groonga(Rroonga) for using easily. You can add the data in the column without specifying. You can easy to use and persistence, advanced search query, sort, grouping (drill down), snippets, and pagination. You can make an immediate search engine.
 
 ## Installation
 

@@ -8,8 +8,8 @@ Gem::Specification.new do |spec|
   spec.version       = GrnMini::VERSION
   spec.authors       = ["ongaeshi"]
   spec.email         = ["ongaeshi0621@gmail.com"]
-  spec.description   = %q{Groonga(Rroonga) wrapper for using easily.}
-  spec.summary       = %q{It is the KVS it's so easy to use.}
+  spec.summary       = %q{Groonga(Rroonga) wrapper for use as the KVS.}
+  spec.description   = %q{Groonga(Rroonga) for using easily. You can add the data in the column without specifying. You can easy to use and persistence, advanced search query, sort, grouping (drill down), snippets, and pagination. You can make an immediate search engine.}
   spec.homepage      = ""
   spec.license       = "MIT"
 

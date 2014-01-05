@@ -1,12 +1,10 @@
 # GrnMini
 
-Groonga(Rroonga) wrapper for using easily. It is the KVS it's so easy to use.
+Groonga(Rroonga) wrapper for using easily. It is the KVS so easy to use.
 
 ## Installation
 
     $ gem install grn_mini
-
-Other installation is not required.
 
 ## Basic Usage
 
@@ -17,7 +15,7 @@ require 'grn_mini'
 array = GrnMini::Array.new(File.join(dir, "test.db"))
 ```
 
-### Add the element with the number column and text column.
+### Add the record with the number column and text column.
 
 Determine the column type when you first call "GrnMini::Array#add". (Add inverted index if data type is "string".)
 
@@ -61,8 +59,8 @@ GrnMini::Array.tmpdb do |array|
   array[2].int      #=> 2
 
   # Float
-  array[1].flaot    #=> 1.5
-  array[2].flaot    #=> 2.5
+  array[1].float    #=> 1.5
+  array[2].float    #=> 2.5
 
   # Time
   array[1].time    #=> 1999-01-01
@@ -71,6 +69,75 @@ end
 ```
 
 See also [8.4. Data type — Groonga documentation](http://groonga.org/docs/reference/types.html).
+
+## Access Record
+
+### Add
+
+```ruby
+require 'grn_mini'
+
+array = GrnMini::Array.new(File.join(dir, "test.db"))
+array << {name:"Tanaka",  age: 11, height: 162.5}
+array << {name:"Suzuki",  age: 31, height: 170.0}
+```
+
+### Read
+
+```ruby
+record = array[1] # Read from id (> 0)
+
+# Get id
+record.id       #=> 1
+
+# Access function with the same name as the column name
+record.name     #=> "Tanaka
+record.age      #=> 11
+record.height   #=> 162.5
+
+# Groonga::Record#attributes is useful for debug
+record.attributes #=> {name: "Tanaka", age: 11, height: 162.5}
+```
+
+### Update
+
+```ruby
+array[2].name = "Hayashi"
+
+array[2].attributes #=> {name: "Hayashi", age: 31, height: 170.0}
+```
+
+### Delete
+
+Delete by passing id.
+
+```ruby
+array.delete(1)
+
+# It returns 'nil' when you access a deleted record
+array[1] #=> nil
+
+# Can't see deleted records if acess from Enumerable
+record = array.first # Return the record of id=2
+record.attributes    #=> {name: "Hayashi", age: 31, height: 170.0}
+```
+
+It is also possible to pass the block.
+
+```ruby
+GrnMini::Array.tmpdb do |array|
+  array << {name:"Tanaka",  age: 11, height: 162.5}
+  array << {name:"Suzuki",  age: 31, height: 170.0}
+  array << {name:"Hayashi", age: 20, height: 165.0}
+
+  array.delete do |record|
+    record.age <= 20
+  end
+
+  array.size             #=> 1
+  array.first.attributes #=> {name:"Suzuki",  age: 31, height: 170.0}
+end
+```
 
 ## Search
 
@@ -83,6 +150,8 @@ See also [8.4. Data type — Groonga documentation](http://groonga.org/docs/refe
 ## Pagination
 
 ## Mini Search Engine
+
+## Use Raw Groonga Object
 
 ## Contributing
 

@@ -264,7 +264,7 @@ end
 ## Snippet
 
 Display of keyword surrounding text. It is often used in search engine.
-Use `GrnMini::Util::text_snippet_from_selection_results`
+Use `GrnMini::Util::text_snippet_from_selection_results`.
 
 ```ruby
 GrnMini::Array.tmpdb do |array|
@@ -315,6 +315,52 @@ end
 See also [Groonga::Expression#snippet](http://ranguba.org/rroonga/en/Groonga/Expression.html#snippet-instance_method)
 
 ## Pagination
+
+#paginate is more convenient than #sort if you want a pagination.
+
+```ruby
+GrnMini::Array.tmpdb do |array|
+  array << {text: "aaaa", filename: "1.txt"}
+  array << {text: "aaaa aaaa", filename: "2a.txt"}
+  array << {text: "aaaa aaaa aaaa", filename: "3.txt"}
+  array << {text: "aaaa aaaa", filename: "2b.txt"}
+  array << {text: "aaaa aaaa", filename: "2c.txt"}
+  array << {text: "aaaa aaaa", filename: "2d.txt"}
+  array << {text: "aaaa aaaa", filename: "2e.txt"}
+  array << {text: "aaaa aaaa", filename: "2f.txt"}
+
+  results = array.select("aaaa")
+
+  # -- page1 --
+  page_entries = results.paginate([["_score", :desc]], :page => 1, :size => 5)
+
+  # Total number of record
+  page_entries.n_records    #=> 8
+
+  # Page offset
+  page_entries.start_offset #=> 1
+  page_entries.end_offset   #=> 5
+
+  # Page entries
+  page_entries.size         #=> 5
+
+  # -- page2 --
+  page_entries = results.paginate([["_score", :desc]], :page => 2, :size => 5)
+
+  # Sample page content display
+  puts "#{page_entries.n_records} hit. (#{page_entries.start_offset} - #{page_entries.end_offset})"
+  page_entries.each do |record|
+    puts "#{record.filename}: #{record.text}"
+  end
+
+  #=> 8 hit. (6 - 8)
+  #   2b.txt: aaaa aaaa
+  #   2f.txt: aaaa aaaa
+  #   1.txt: aaaa
+end
+```
+
+See also [Groonga::Table#pagenate](http://ranguba.org/rroonga/en/Groonga/Table.html#paginate-instance_method)
 
 ## Mini Search Engine
 

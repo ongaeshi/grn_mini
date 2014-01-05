@@ -39,7 +39,6 @@ GrnMini::Array.tmpdb do |array|
   array << {text: "bbb", number: 2}
   array << {text: "ccc", number: 3}
 end
-
 # Delete temporary database
 ```
 

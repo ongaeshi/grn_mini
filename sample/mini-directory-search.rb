@@ -43,17 +43,25 @@ if __FILE__ == $PROGRAM_NAME
   Input.from_dir(array) if array.empty?
 
   get '/' do
-    results = array.select(params[:query])
-    snippet = GrnMini::Util::html_snippet_from_selection_results(results)
-
     content = ""
 
-    results.each do |record|
-      content += "--- #{record.filename} ---\n"
-      snippet.execute(record.text).each do |segment|
-        content += segment + "\n"
-        content += "---\n"
+    if params[:query]
+      results = array.select(params[:query])
+      snippet = GrnMini::Util::html_snippet_from_selection_results(results)
+
+      elements = []
+
+      results.each do |record|
+        element = "<hr>#{record.filename}\n"
+        
+        snippet.execute(record.text).each do |segment|
+          element += "<pre style=\"border:1px solid #bbb;\">#{segment}</pre>\n" # @todo border
+        end
+
+        elements << element
       end
+
+      content = elements.join("\n")
     end
 
 <<EOF
@@ -65,7 +73,7 @@ if __FILE__ == $PROGRAM_NAME
   </form>
 </div>
 <div class="content">
-<pre>#{content}</pre>
+ #{content}
 </div>
 EOF
   end

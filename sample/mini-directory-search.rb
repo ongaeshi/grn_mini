@@ -44,6 +44,7 @@ if __FILE__ == $PROGRAM_NAME
 
   get '/' do
     content = ""
+    header = "<span>#{array.size} files.</span>"
 
     if params[:query] && !params[:query].empty?
       results = array.select(params[:query])
@@ -61,11 +62,12 @@ if __FILE__ == $PROGRAM_NAME
         elements << element
       end
 
+      header  = "<span>#{results.size} hit. (#{array.size} files)</span>"
       content = elements.join("\n")
     end
 
 <<EOF
-<span>#{array.size} files.</span>
+#{header}
 <div class="form">
   <form method="post" action="/search">
     <input type="text" style="width: 419px;" name="query" value="#{params[:query]}">

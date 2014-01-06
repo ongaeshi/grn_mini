@@ -50,19 +50,20 @@ if __FILE__ == $PROGRAM_NAME
       results = array.select(params[:query])
       snippet = GrnMini::Util::html_snippet_from_selection_results(results, "<strong style=\"background-color: #FFEE55\">", "</strong>")
 
+      page_entries = results.paginate([["_score", :desc]], :page => params[:page] ? params[:page].to_i : 1, :size => 5)
       elements = []
 
-      results.each do |record|
+      page_entries.each do |record|
         element = "<hr>#{record.filename}\n"
         
         snippet.execute(record.text).each do |segment|
-          element += "<pre style=\"border:1px solid #bbb;\">#{segment}</pre>\n" # @todo border
+          element += "<pre style=\"border:1px solid #bbb;\">#{segment}</pre>\n"
         end
 
         elements << element
       end
 
-      header  = "<span>#{results.size} hit. (#{array.size} files)</span>"
+      header = "<span>#{page_entries.n_records} hit. (#{page_entries.start_offset} - #{page_entries.end_offset})</span>"
       content = elements.join("\n")
     end
 
@@ -76,6 +77,8 @@ if __FILE__ == $PROGRAM_NAME
 </div>
 <div class="content">
  #{content}
+</div>
+<div class="pagenation">
 </div>
 EOF
   end

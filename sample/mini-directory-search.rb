@@ -69,13 +69,17 @@ class Search
       @content = elements.join("\n")
 
       if page_entries.n_pages > 1
-        @pagenation = page_entries.pages.map {|v|
+        @pagenation += "<a href=\"/?query=#{@params[:query]}&page=#{@page - 1}\">&lt;-</a>&nbsp;" if @page > 1
+        
+        @pagenation += page_entries.pages.map {|v|
           if (v == @page)
-            v.to_s
+            "<strong>#{v.to_s}</strong>"
           else
             "<a href=\"/?query=#{@params[:query]}&page=#{v}\">#{v}</a>"
           end
         }.join("&nbsp;")
+
+        @pagenation += "&nbsp;<a href=\"/?query=#{@params[:query]}&page=#{@page + 1}\">-&gt;</a>&nbsp;" if @page < page_entries.n_pages
       end
       
     else

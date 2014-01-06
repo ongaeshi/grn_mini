@@ -45,7 +45,7 @@ if __FILE__ == $PROGRAM_NAME
   get '/' do
     content = ""
 
-    if params[:query]
+    if params[:query] && !params[:query].empty?
       results = array.select(params[:query])
       snippet = GrnMini::Util::html_snippet_from_selection_results(results)
 

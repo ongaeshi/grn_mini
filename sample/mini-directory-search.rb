@@ -37,20 +37,20 @@ module Input
   end
 end
 
-if __FILE__ == $PROGRAM_NAME
-  array = GrnMini::Array.new("mini-directory-search.db")
+class Search
+  def initialize(array, params)
+    @array   = array
+    @params  = params
+    @header  = ""
+    @content = ""
+  end
 
-  Input.from_dir(array) if array.empty?
-
-  get '/' do
-    content = ""
-    header = "<span>#{array.size} files.</span>"
-
-    if params[:query] && !params[:query].empty?
-      results = array.select(params[:query])
+  def parse
+    if @params[:query] && !@params[:query].empty?
+      results = @array.select(@params[:query])
       snippet = GrnMini::Util::html_snippet_from_selection_results(results, "<strong style=\"background-color: #FFEE55\">", "</strong>")
 
-      page_entries = results.paginate([["_score", :desc]], :page => params[:page] ? params[:page].to_i : 1, :size => 5)
+      page_entries = results.paginate([["_score", :desc]], :page => @params[:page] ? @params[:page].to_i : 1, :size => 5)
       elements = []
 
       page_entries.each do |record|
@@ -63,24 +63,40 @@ if __FILE__ == $PROGRAM_NAME
         elements << element
       end
 
-      header = "<span>#{page_entries.n_records} hit. (#{page_entries.start_offset} - #{page_entries.end_offset})</span>"
-      content = elements.join("\n")
+      @header = "<span>#{page_entries.n_records} hit. (#{page_entries.start_offset} - #{page_entries.end_offset})</span>"
+      @content = elements.join("\n")
+    else
+      @header = "<span>#{@array.size} files.</span>"
     end
+  end
 
-<<EOF
-#{header}
+  def html
+    <<EOF
+#{@header}
 <div class="form">
   <form method="post" action="/search">
-    <input type="text" style="width: 419px;" name="query" value="#{params[:query]}">
+    <input type="text" style="width: 419px;" name="query" value="#{@params[:query]}">
     <input type="submit" value="Search">
   </form>
 </div>
 <div class="content">
- #{content}
+ #{@content}
 </div>
 <div class="pagenation">
 </div>
 EOF
+  end
+end
+
+if __FILE__ == $PROGRAM_NAME
+  array = GrnMini::Array.new("mini-directory-search.db")
+
+  Input.from_dir(array) if array.empty?
+
+  get '/' do
+    search = Search.new(array, params)
+    search.parse
+    search.html
   end
 
   post '/search' do

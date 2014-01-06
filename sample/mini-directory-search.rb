@@ -43,6 +43,14 @@ if __FILE__ == $PROGRAM_NAME
   Input.from_dir(array) if array.empty?
 
   get '/' do
+    results = array.select(params[:query])
+    content = ""
+    results.each do |record|
+      content += <<EOF
+--- #{record.filename} ---
+EOF
+    end
+    
 <<EOF
 <span>#{array.size} files.</span>
 <div class="form">
@@ -50,6 +58,9 @@ if __FILE__ == $PROGRAM_NAME
     <input type="text" name="query" value="#{params[:query]}">
     <input type="submit" value="Search">
   </form>
+</div>
+<div class="content">
+<pre>#{content}</pre>
 </div>
 EOF
   end

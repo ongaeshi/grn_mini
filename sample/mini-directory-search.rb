@@ -2,7 +2,7 @@ require 'grn_mini'
 require 'find'
 require 'kconv'
 require 'sinatra'
-require "sinatra/reloader" if development?
+require "sinatra/reloader" if ENV['SINATRA_RELOADER']
 
 module Input
   module_function

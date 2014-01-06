@@ -2,6 +2,7 @@ require 'grn_mini'
 require 'find'
 require 'kconv'
 require 'sinatra'
+require "sinatra/reloader" if development?
 
 module Input
   module_function
@@ -42,12 +43,18 @@ if __FILE__ == $PROGRAM_NAME
   Input.from_dir(array) if array.empty?
 
   get '/' do
-    results = []
-    
-    array.map do |record|
-      results << record.filename
-    end
+<<EOF
+<span>#{array.size} files.</span>
+<div class="form">
+  <form method="post" action="/search">
+    <input type="text" name="query" value="#{params[:query]}">
+    <input type="submit" value="Search">
+  </form>
+</div>
+EOF
+  end
 
-    results.join("<br>")
+  post '/search' do
+    redirect "/?query=#{escape(params[:query])}"
   end
 end

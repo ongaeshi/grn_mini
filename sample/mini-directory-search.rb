@@ -88,18 +88,16 @@ EOF
   end
 end
 
-if __FILE__ == $PROGRAM_NAME
-  array = GrnMini::Array.new("mini-directory-search.db")
+# main
+array = GrnMini::Array.new("mini-directory-search.db")
+Input.from_dir(array) if array.empty?
 
-  Input.from_dir(array) if array.empty?
+get '/' do
+  search = Search.new(array, params)
+  search.parse
+  search.html
+end
 
-  get '/' do
-    search = Search.new(array, params)
-    search.parse
-    search.html
-  end
-
-  post '/search' do
-    redirect "/?query=#{escape(params[:query])}"
-  end
+post '/search' do
+  redirect "/?query=#{escape(params[:query])}"
 end

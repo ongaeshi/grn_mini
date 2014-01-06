@@ -113,17 +113,19 @@ EOF
 end
 
 # main
-array = GrnMini::Array.new("mini-directory-search.db")
-Input.from_dir(array) if array.empty?
+configure do
+  $array = GrnMini::Array.new("mini-directory-search.db")
+  Input.from_dir($array) if $array.empty?
+end
 
 get '/' do
-  search = Search.new(array, params)
+  search = Search.new($array, params)
   search.parse
   search.html
 end
 
 get '/:id' do
-  record = array[params[:id].to_i]
+  record = $array[params[:id].to_i]
   
   <<EOF
 <span>#{record.filename}</span>

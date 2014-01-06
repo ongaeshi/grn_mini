@@ -56,7 +56,7 @@ class Search
       elements = []
 
       page_entries.each do |record|
-        element = "<hr>#{record.filename}\n"
+        element = "<hr><a href=\"/#{record.id}\">#{record.filename}</a>\n"
         
         snippet.execute(record.text).each do |segment|
           element += "<pre style=\"border:1px solid #bbb;\">#{segment}</pre>\n"
@@ -118,6 +118,24 @@ get '/' do
   search = Search.new(array, params)
   search.parse
   search.html
+end
+
+get '/:id' do
+  record = array[params[:id].to_i]
+  
+  <<EOF
+<span>#{record.filename}</span>
+<div class="form">
+  <form method="post" action="/search">
+    <input type="text" style="width: 419px;" name="query" value="#{@params[:query]}">
+    <input type="submit" value="Search">
+  </form>
+</div>
+<div class="content">
+<hr>
+<pre>#{record.text}</pre>
+</div>
+EOF
 end
 
 post '/search' do

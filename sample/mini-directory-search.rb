@@ -8,13 +8,15 @@ module Input
   module_function
   
   def from_dir(array, dir = ".")
+    index = 1
     puts "Create database .."
     Find.find(File.expand_path(dir)) do |filename|
       Find.prune if ignore_dir?(filename)
 
       if File.file? filename
         next if ignore_file?(filename)
-        array << {filename: filename, text: read_file(filename), timestamp: File.stat(filename).mtime, suffix: File.extname(filename).sub('.', "") }
+        array << {filename: filename, text: read_file(filename), timestamp: File.stat(filename).mtime, suffix: File.extname(filename).sub('.', ""), index: index } # index is dirty
+        index += 1
       end
     end
     puts "Input complete : #{array.size} files"
@@ -56,7 +58,7 @@ class Search
       elements = []
 
       page_entries.each do |record|
-        element = "<hr><a href=\"/#{record.id}\">#{record.filename}</a>\n"
+        element = "<hr><a href=\"/#{record.index}\">#{record.filename}</a>\n"
         
         snippet.execute(record.text).each do |segment|
           element += "<pre style=\"border:1px solid #bbb;\">#{segment}</pre>\n"

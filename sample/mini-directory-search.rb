@@ -8,6 +8,7 @@ module Input
   module_function
   
   def from_dir(array, dir = ".")
+    puts "Create database .."
     Find.find(File.expand_path(dir)) do |filename|
       Find.prune if ignore_dir?(filename)
 
@@ -15,7 +16,6 @@ module Input
         next if ignore_file?(filename)
         array << {filename: filename, text: read_file(filename), timestamp: File.stat(filename).mtime}
       end
-      puts "Input : #{array.size}" if array.size > 0 && array.size % 100 == 0
     end
     puts "Input complete : #{array.size} files"
   end

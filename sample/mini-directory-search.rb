@@ -48,7 +48,7 @@ if __FILE__ == $PROGRAM_NAME
 
     if params[:query] && !params[:query].empty?
       results = array.select(params[:query])
-      snippet = GrnMini::Util::html_snippet_from_selection_results(results)
+      snippet = GrnMini::Util::html_snippet_from_selection_results(results, "<strong style=\"background-color: #FFEE55\">", "</strong>")
 
       elements = []
 

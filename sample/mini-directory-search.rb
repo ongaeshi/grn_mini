@@ -1,6 +1,7 @@
 require 'grn_mini'
 require 'find'
 require 'kconv'
+require 'sinatra'
 
 module Input
   module_function
@@ -39,4 +40,14 @@ if __FILE__ == $PROGRAM_NAME
   array = GrnMini::Array.new("mini-directory-search.db")
 
   Input.from_dir(array) if array.empty?
+
+  get '/' do
+    results = []
+    
+    array.map do |record|
+      results << record.filename
+    end
+
+    results.join("<br>")
+  end
 end

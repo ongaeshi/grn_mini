@@ -69,22 +69,26 @@ class Search
       @content = elements.join("\n")
 
       if page_entries.n_pages > 1
-        @pagenation += "<a href=\"/?query=#{@params[:query]}&page=#{@page - 1}\">&lt;-</a>&nbsp;" if @page > 1
+        @pagenation += page_link(@page - 1, "&lt;-") + "&nbsp;" if @page > 1
         
         @pagenation += page_entries.pages.map {|v|
           if (v == @page)
             "<strong>#{v.to_s}</strong>"
           else
-            "<a href=\"/?query=#{@params[:query]}&page=#{v}\">#{v}</a>"
+            page_link(v, v.to_s)
           end
         }.join("&nbsp;")
 
-        @pagenation += "&nbsp;<a href=\"/?query=#{@params[:query]}&page=#{@page + 1}\">-&gt;</a>&nbsp;" if @page < page_entries.n_pages
+        @pagenation += "&nbsp;" + page_link(@page + 1, "-&gt;") if @page < page_entries.n_pages
       end
       
     else
       @header = "<span>#{@array.size} files.</span>"
     end
+  end
+
+  def page_link(page, msg)
+    "<a href=\"/?query=#{@params[:query]}&page=#{page}\">#{msg}</a>"
   end
 
   def html

@@ -133,7 +133,7 @@ get '/:id' do
 </div>
 <div class="content">
 <hr>
-<pre>#{record.text}</pre>
+<pre>#{CGI.escapeHTML(record.text)}</pre>
 </div>
 EOF
 end

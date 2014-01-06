@@ -14,7 +14,7 @@ module Input
 
       if File.file? filename
         next if ignore_file?(filename)
-        array << {filename: filename, text: read_file(filename), timestamp: File.stat(filename).mtime}
+        array << {filename: filename, text: read_file(filename), timestamp: File.stat(filename).mtime, suffix: File.extname(filename).sub('.', "") }
       end
     end
     puts "Input complete : #{array.size} files"

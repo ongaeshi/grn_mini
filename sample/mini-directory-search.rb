@@ -41,8 +41,10 @@ class Search
   def initialize(array, params)
     @array   = array
     @params  = params
+    @page    = @params[:page] ? @params[:page].to_i : 1
     @header  = ""
     @content = ""
+    @pagenation = ""
   end
 
   def parse
@@ -50,7 +52,7 @@ class Search
       results = @array.select(@params[:query])
       snippet = GrnMini::Util::html_snippet_from_selection_results(results, "<strong style=\"background-color: #FFEE55\">", "</strong>")
 
-      page_entries = results.paginate([["_score", :desc]], :page => @params[:page] ? @params[:page].to_i : 1, :size => 5)
+      page_entries = results.paginate([["_score", :desc]], :page => @page, :size => 20)
       elements = []
 
       page_entries.each do |record|
@@ -65,6 +67,17 @@ class Search
 
       @header = "<span>#{page_entries.n_records} hit. (#{page_entries.start_offset} - #{page_entries.end_offset})</span>"
       @content = elements.join("\n")
+
+      if page_entries.n_pages > 1
+        @pagenation = page_entries.pages.map {|v|
+          if (v == @page)
+            v.to_s
+          else
+            "<a href=\"/?query=#{@params[:query]}&page=#{v}\">#{v}</a>"
+          end
+        }.join("&nbsp;")
+      end
+      
     else
       @header = "<span>#{@array.size} files.</span>"
     end
@@ -83,6 +96,7 @@ class Search
  #{@content}
 </div>
 <div class="pagenation">
+ #{@pagenation}
 </div>
 EOF
   end

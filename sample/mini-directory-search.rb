@@ -68,7 +68,7 @@ if __FILE__ == $PROGRAM_NAME
 <span>#{array.size} files.</span>
 <div class="form">
   <form method="post" action="/search">
-    <input type="text" name="query" value="#{params[:query]}">
+    <input type="text" style="width: 419px;" name="query" value="#{params[:query]}">
     <input type="submit" value="Search">
   </form>
 </div>

@@ -44,13 +44,18 @@ if __FILE__ == $PROGRAM_NAME
 
   get '/' do
     results = array.select(params[:query])
+    snippet = GrnMini::Util::html_snippet_from_selection_results(results)
+
     content = ""
+
     results.each do |record|
-      content += <<EOF
---- #{record.filename} ---
-EOF
+      content += "--- #{record.filename} ---\n"
+      snippet.execute(record.text).each do |segment|
+        content += segment + "\n"
+        content += "---\n"
+      end
     end
-    
+
 <<EOF
 <span>#{array.size} files.</span>
 <div class="form">

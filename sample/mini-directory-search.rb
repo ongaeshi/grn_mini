@@ -23,7 +23,6 @@ module Input
   end
 
   def read_file(filename)
-    # p filename
     text = File.read(filename)
     Kconv.kconv(text, Kconv::UTF8).gsub("\r\n", "\n")
   end
@@ -34,8 +33,7 @@ module Input
   end
 
   def ignore_file?(filename)
-    s = File.read(filename, 1024) or return false
-    return s.index("\x00")
+    (s = File.read(filename, 1024)) && s.index("\x00")
   end
 end
 
@@ -44,21 +42,26 @@ class Search
     @array   = array
     @params  = params
     @page    = @params[:page] ? @params[:page].to_i : 1
-    @header  = ""
-    @content = ""
-    @pagination = ""
+  end
+
+  def has_query?
+    @params[:query] && !@params[:query].empty?
   end
 
   def parse
-    if @params[:query] && !@params[:query].empty?
+    unless has_query?
+      @header     = "<span>#{@array.size} files.</span>"
+      @content    = ""
+      @pagination = ""
+    else
       results = @array.select(@params[:query])
-      snippet = GrnMini::Util::html_snippet_from_selection_results(results, "<strong style=\"background-color: #FFEE55\">", "</strong>")
 
       page_entries = results.paginate([["_score", :desc]], :page => @page, :size => 20)
+      snippet = GrnMini::Util::html_snippet_from_selection_results(results, "<strong style=\"background-color: #FFEE55\">", "</strong>")
       elements = []
 
       page_entries.each do |record|
-        element = "<hr><a href=\"/#{record.index}\">#{record.filename}</a>\n"
+        element = "<hr>\n<a href=\"/#{record.index}\">#{record.filename}</a>\n"
         
         snippet.execute(record.text).each do |segment|
           element += "<pre style=\"border:1px solid #bbb;\">#{segment}</pre>\n"
@@ -83,9 +86,6 @@ class Search
 
         @pagination += "&nbsp;" + page_link(@page + 1, "-&gt;") if @page < page_entries.n_pages
       end
-      
-    else
-      @header = "<span>#{@array.size} files.</span>"
     end
   end
 
@@ -118,7 +118,7 @@ EOF
   end
 end
 
-# main
+### main ###
 configure do
   $array = GrnMini::Array.new("mini-directory-search.db")
   Input.from_dir($array) if $array.empty?
@@ -134,7 +134,7 @@ get '/:id' do
   record = $array[params[:id].to_i]
   
   <<EOF
-<span>#{record.filename}</span>
+<span>#{record.filename} (#{record.timestamp})</span>
 <div class="form">
   <form method="post" action="/search">
     <input type="text" style="width: 419px;" name="query" value="#{@params[:query]}">
@@ -142,8 +142,8 @@ get '/:id' do
   </form>
 </div>
 <div class="content">
-<hr>
-<pre>#{CGI.escapeHTML(record.text)}</pre>
+  <hr>
+  <pre>#{CGI.escapeHTML(record.text)}</pre>
 </div>
 EOF
 end

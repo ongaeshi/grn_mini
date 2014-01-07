@@ -9,11 +9,11 @@ module GrnMini
     end
 
     def text_snippet_from_selection_results(table, open_tag = '<<', close_tag = ">>")
-      table.expression.snippet([[open_tag, close_tag]])
+      table.expression.snippet([[open_tag, close_tag]], {normalize: true})
     end
 
     def html_snippet_from_selection_results(table, open_tag = '<strong>', close_tag = "</strong>")
-      table.expression.snippet([[open_tag, close_tag]], {html_escape: true})
+      table.expression.snippet([[open_tag, close_tag]], {html_escape: true, normalize: true})
     end
   end
 end

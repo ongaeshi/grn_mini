@@ -46,7 +46,7 @@ class Search
     @page    = @params[:page] ? @params[:page].to_i : 1
     @header  = ""
     @content = ""
-    @pagenation = ""
+    @pagination = ""
   end
 
   def parse
@@ -71,9 +71,9 @@ class Search
       @content = elements.join("\n")
 
       if page_entries.n_pages > 1
-        @pagenation += page_link(@page - 1, "&lt;-") + "&nbsp;" if @page > 1
+        @pagination += page_link(@page - 1, "&lt;-") + "&nbsp;" if @page > 1
 
-        @pagenation += page_range(page_entries).map {|v|
+        @pagination += page_range(page_entries).map {|v|
           if (v == @page)
             "<strong>#{v.to_s}</strong>"
           else
@@ -81,7 +81,7 @@ class Search
           end
         }.join("&nbsp;")
 
-        @pagenation += "&nbsp;" + page_link(@page + 1, "-&gt;") if @page < page_entries.n_pages
+        @pagination += "&nbsp;" + page_link(@page + 1, "-&gt;") if @page < page_entries.n_pages
       end
       
     else
@@ -111,8 +111,8 @@ class Search
 <div class="content">
  #{@content}
 </div>
-<div class="pagenation">
- #{@pagenation}
+<div class="pagination">
+ #{@pagination}
 </div>
 EOF
   end

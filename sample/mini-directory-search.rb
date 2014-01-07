@@ -72,8 +72,8 @@ class Search
 
       if page_entries.n_pages > 1
         @pagenation += page_link(@page - 1, "&lt;-") + "&nbsp;" if @page > 1
-        
-        @pagenation += page_entries.pages.map {|v|
+
+        @pagenation += page_range(page_entries).map {|v|
           if (v == @page)
             "<strong>#{v.to_s}</strong>"
           else
@@ -87,6 +87,12 @@ class Search
     else
       @header = "<span>#{@array.size} files.</span>"
     end
+  end
+
+  def page_range(page_entries)
+    first_diff = [5 - (@page - 1), 0].max
+    last_diff  = [5 - (page_entries.n_pages - @page), 0].max
+    [@page - 5 - last_diff, 1].max .. [@page + 5 + first_diff, page_entries.n_pages].min
   end
 
   def page_link(page, msg)

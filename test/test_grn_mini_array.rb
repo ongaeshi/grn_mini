@@ -325,8 +325,8 @@ EOF
       record = results.first
       segments = snippet.execute(record.text)
       assert_equal 2, segments.size 
-      assert_match /\[1\] <<This>> is a <<pen>> pep pea pek pet./, segments[0]
-      assert_match /\[2\] <<This>> is a <<pen>> pep pea pek pet./, segments[1]
+      assert_match /\[1\]<< This>> is a<< pen>> pep pea pek pet./, segments[0]
+      assert_match /\[2\]<< This>> is a<< pen>> pep pea pek pet./, segments[1]
     end
   end
 
@@ -344,7 +344,7 @@ EOF
       record = results.first
       segments = snippet.execute(record.text)
       assert_equal 1, segments.size
-      assert_equal "&lt;html&gt;\n  &lt;div&gt;<strong>This</strong> is a <strong>pen</strong> pep pea pek pet.&lt;/div&gt;\n&lt;/html&gt;\n", segments.first
+      assert_equal "&lt;html&gt;\n  &lt;div&gt;<strong>This</strong> is a<strong> pen</strong> pep pea pek pet.&lt;/div&gt;\n&lt;/html&gt;\n", segments.first
     end
   end
 

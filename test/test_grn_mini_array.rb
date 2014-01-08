@@ -41,6 +41,7 @@ class TestGrnMiniArray < MiniTest::Unit::TestCase
       results = array.select("bb number:<10")
 
       assert_equal 1, results.size
+      assert_equal 2, results.first.key.id
       assert_equal "bbb", results.first.text
       assert_equal 2, results.first.number
     end 

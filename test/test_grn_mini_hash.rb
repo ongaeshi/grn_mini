@@ -121,4 +121,37 @@ class TestGrnMiniHash < MiniTest::Unit::TestCase
     end
   end
 
+  def test_delete_by_id
+    GrnMini::Hash.tmpdb do |hash|
+      hash["a"] = {text:"aaa", number:1}
+      hash["b"] = {text:"bbb", number:2}
+      hash["c"] = {text:"ccc", number:3}
+
+      # Delete from key
+      assert_equal 3, hash.size
+      assert_equal 2, hash["b"].number
+
+      hash.delete("b")
+      
+      assert_equal 2, hash.size
+      assert_nil hash["b"]
+    end
+  end
+
+  def test_delete_by_block
+    GrnMini::Hash.tmpdb do |hash|
+      hash["a"] = {text:"aaa", number:1}
+      hash["b"] = {text:"bbb", number:2}
+      hash["c"] = {text:"ccc", number:3}
+
+      hash.delete do |record|
+        record.number >= 2
+      end
+
+      assert_equal 1, hash.size
+      assert_equal "aaa", hash.first.text
+      assert_equal 1, hash.first.number
+    end
+  end
+
 end

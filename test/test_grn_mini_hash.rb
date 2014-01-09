@@ -220,4 +220,41 @@ class TestGrnMiniHash < MiniTest::Unit::TestCase
     end
   end
 
+  def test_sort
+    GrnMini::Hash.tmpdb do |hash| 
+      hash["a"] = {name:"Tanaka",  age: 11, height: 162.5}
+      hash["b"] = {name:"Suzuki",  age: 31, height: 170.0}
+      hash["c"] = {name:"Hayashi", age: 21, height: 175.4}
+      hash["d"] = {name:"Suzuki",  age:  5, height: 110.0}
+
+      sorted_by_age = hash.sort(["age"])
+      sorted_array = sorted_by_age.map {|r| {name: r.name, age: r.age}}
+      assert_equal [{:name=>"Suzuki", :age=>5},
+                    {:name=>"Tanaka", :age=>11},
+                    {:name=>"Hayashi", :age=>21},
+                    {:name=>"Suzuki", :age=>31}], sorted_array
+
+      sorted_by_combination = hash.sort([{key: "name", order: :ascending},
+                                          {key: "age" , order: :descending}])
+      sorted_array = sorted_by_combination.map {|r| {name: r.name, age: r.age}}
+      assert_equal [{:name=>"Hayashi", :age=>21},
+                    {:name=>"Suzuki", :age=>31},
+                    {:name=>"Suzuki", :age=>5},
+                    {:name=>"Tanaka", :age=>11}], sorted_array
+    end
+  end
+
+  def test_group_from_hash
+    GrnMini::Hash.tmpdb do |hash| 
+      hash["a"] = {text:"aaaa.txt", suffix:"txt", type:1}
+      hash["b"] = {text:"aaaa.doc", suffix:"doc", type:2}
+      hash["c"] = {text:"aabb.txt", suffix:"txt", type:2}
+
+      groups = GrnMini::Util::group_with_sort(hash, "suffix")
+
+      assert_equal 2, groups.size
+      assert_equal ["txt", 2], [groups[0].key, groups[0].n_sub_records]
+      assert_equal ["doc", 1], [groups[1].key, groups[1].n_sub_records]
+    end
+  end
 end

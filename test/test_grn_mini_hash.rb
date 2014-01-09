@@ -148,4 +148,53 @@ class TestGrnMiniHash < MiniTest::Unit::TestCase
     end
   end
 
+  def test_float_column
+    GrnMini::Hash.tmpdb do |hash| 
+      hash["a"] = {text:"aaaa", float: 1.5}
+      hash["b"] = {text:"bbbb", float: 2.5}
+      hash["c"] = {text:"cccc", float: 3.5}
+
+      assert_equal 2.5, hash["b"].float
+
+      results = hash.select("float:>2.6")
+      assert_equal 3.5, results.first.float
+    end
+  end
+
+  def test_time_column
+    GrnMini::Hash.tmpdb do |hash| 
+      hash["a"] = {text:"aaaa", timestamp: Time.new(2013)} # 2013-01-01
+      hash["b"] = {text:"bbbb", timestamp: Time.new(2014)} # 2014-01-01
+      hash["c"] = {text:"cccc", timestamp: Time.new(2015)} # 2015-01-01
+
+      assert_equal Time.new(2014), hash["b"].timestamp
+
+      results = hash.select("timestamp:<=#{Time.new(2013,12).to_i}")
+      assert_equal 1, results.size
+      assert_equal Time.new(2013), results.first.timestamp
+    end    
+  end
+
+  def test_record_attributes
+    GrnMini::Hash.tmpdb do |hash| 
+      hash["a"] = {text:"aaaa", int: 1}
+      hash["b"] = {text:"bbbb", int: 2}
+      hash["c"] = {text:"cccc", int: 3}
+
+      assert_equal({"_id"=>1, "_key"=>"a", "int"=>1, "text"=>"aaaa"}, hash["a"].attributes)
+      assert_equal({"_id"=>2, "_key"=>"b", "int"=>2, "text"=>"bbbb"}, hash["b"].attributes)
+      assert_equal({"_id"=>3, "_key"=>"c", "int"=>3, "text"=>"cccc"}, hash["c"].attributes)
+    end
+  end
+
+  def test_assign_long_text_to_short_text
+    GrnMini::Hash.tmpdb do |hash| 
+      hash["a"] = {filename:"a.txt"}
+      hash["b"] = {filename:"a"*4095 + ".txt" } # Over 4095 byte (ShortText limit)
+
+      results = hash.select("txt", default_column: "filename")
+      assert_equal 2, results.size 
+    end
+  end
+
 end

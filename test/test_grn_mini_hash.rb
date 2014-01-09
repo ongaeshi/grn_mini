@@ -197,4 +197,27 @@ class TestGrnMiniHash < MiniTest::Unit::TestCase
     end
   end
 
+  def test_grn_object
+    GrnMini::Hash.tmpdb do |hash| 
+      hash["a"] = {text: "aaaa", filename:"a.txt", int: 1, float: 1.5, time: Time.at(2001)}
+
+      raw = hash.grn
+
+      assert_equal true, raw.have_column?("filename")
+      assert_equal true, raw.have_column?("int")
+      assert_equal true, raw.have_column?("float")
+      assert_equal true, raw.have_column?("time")
+      assert_equal false, raw.have_column?("timeee")
+
+      assert_equal "ShortText", raw.column("text").range.name
+      assert_equal "ShortText", raw.column("filename").range.name
+      assert_equal "Int32"    , raw.column("int").range.name
+      assert_equal "Float"    , raw.column("float").range.name
+      assert_equal "Time"     , raw.column("time").range.name
+
+      assert_equal true, raw.support_key? # GrnMini::Array is false
+      assert_equal false, raw.support_sub_records?
+    end
+  end
+
 end

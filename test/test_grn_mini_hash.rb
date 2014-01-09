@@ -71,23 +71,17 @@ class TestGrnMiniHash < MiniTest::Unit::TestCase
 
   def test_each
     GrnMini::Hash.tmpdb do |hash|
+      hash["c"] = {text:"ccc", number:3}
       hash["a"] = {text:"aaa", number:1}
       hash["b"] = {text:"bbb", number:2}
-      hash["c"] = {text:"ccc", number:3}
 
-      hash.each_with_index do |v, index|
-        case index
-        when 0
-          assert_equal "aaa", v.text
-          assert_equal 1, v.number
-        when 1
-          assert_equal "bbb", v.text
-          assert_equal 2, v.number
-        when 2
-          assert_equal "ccc", v.text
-          assert_equal 3, v.number
-        end
+      total = 0
+
+      hash.each do |v|
+        total += v.number
       end
+
+      assert_equal 6, total
     end
   end
 

@@ -52,6 +52,25 @@ end
 # Delete temporary database
 ```
 
+## Create Hash
+
+```ruby
+require 'grn_mini'
+
+hash = GrnMini::Hash.new("test.db")
+
+# Add
+hash["a"] = {text:"aaa", number:1}
+hash["b"] = {text:"bbb", number:2}
+hash["c"] = {text:"ccc", number:3}
+
+# Read
+hash["b"].text       #=> "bbb"
+
+# Write
+hash["b"].text = "BBB"
+```
+
 ## Data Type
 
 ```ruby

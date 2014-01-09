@@ -47,6 +47,10 @@ module GrnMini
       @grn.add(key, values)
     end
 
+    def [](key)
+      @grn[key]
+    end
+    
     def []=(key, value)
       add(key, value)
     end
@@ -64,20 +68,13 @@ module GrnMini
     def empty?
       size == 0
     end
-
+    
     def each
       @grn.each do |record|
         yield record
       end
     end
 
-    class IdIsGreaterThanZero < RuntimeError; end
-
-    def [](id)
-      raise IdIsGreaterThanZero if id == 0
-      @grn[id]
-    end
-    
     def delete(id = nil, &block)
       if block_given?
         @grn.delete(&block)

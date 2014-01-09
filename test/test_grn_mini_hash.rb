@@ -90,4 +90,35 @@ class TestGrnMiniHash < MiniTest::Unit::TestCase
       end
     end
   end
+
+  def test_read_by_key
+    GrnMini::Hash.tmpdb do |hash|
+      hash["a"] = {text:"aaa", number:1}
+      hash["b"] = {text:"bbb", number:2}
+      hash["c"] = {text:"ccc", number:3}
+
+      assert_equal   nil, hash["not found"]
+      assert_equal "aaa", hash["a"].text
+      assert_equal "bbb", hash["b"].text
+      assert_equal "ccc", hash["c"].text
+    end
+  end
+
+  def test_write_by_key
+    GrnMini::Hash.tmpdb do |hash|
+      hash["a"] = {text:"aaa", number:1}
+      hash["b"] = {text:"bbb", number:2}
+      hash["c"] = {text:"ccc", number:3}
+
+      assert_equal "bbb", hash["b"].text
+      assert_equal     2, hash["b"].number
+
+      hash["b"].text   = "BBB"
+      hash["b"].number = 22
+
+      assert_equal "BBB", hash["b"].text
+      assert_equal    22, hash["b"].number
+    end
+  end
+
 end

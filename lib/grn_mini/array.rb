@@ -16,7 +16,7 @@ module GrnMini
 
     def initialize(arg)
       if arg.is_a?(String)
-        Util::create_or_open(arg)
+        GrnMini::create_or_open(arg)
         @name = "Array"
       else
         @name = arg[:name]

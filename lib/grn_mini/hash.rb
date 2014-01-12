@@ -15,12 +15,7 @@ module GrnMini
     end
 
     def initialize(path)
-      unless File.exist?(path)
-        Groonga::Database.create(path: path)
-      else
-        Groonga::Database.open(path)
-      end
-
+      Util::create_or_open(path)
       @grn = Groonga["Hash"] || Groonga::Hash.create(name: "Hash", persistent: true)
       @terms = Groonga["Terms"] || Groonga::PatriciaTrie.create(name: "Terms", key_normalize: true, default_tokenizer: "TokenBigramSplitSymbolAlphaDigit")
     end

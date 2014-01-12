@@ -15,11 +15,7 @@ module GrnMini
     end
 
     def initialize(path)
-      unless File.exist?(path)
-        Groonga::Database.create(path: path)
-      else
-        Groonga::Database.open(path)
-      end
+      Util::create_or_open(path)
 
       unless Groonga["Array"]
         @grn = Groonga::Array.create(name: "Array", persistent: true) 

@@ -40,7 +40,7 @@ module GrnMini
             @grn.define_column(column, "Int32")
           else
             @grn.define_column(column, "ShortText")
-            @terms.define_index_column("array_#{column}", @grn, source: "#{@name}.#{column}", with_position: true)
+            @terms.define_index_column("#{@name}_#{column}", @grn, source: "#{@name}.#{column}", with_position: true)
           end
         end
       end

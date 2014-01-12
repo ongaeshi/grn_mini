@@ -2,13 +2,15 @@ require 'minitest_helper'
 
 class TestGrnMiniArray < MiniTest::Unit::TestCase
   def test_initialize
-    Dir.mktmpdir do |dir|
-      array = GrnMini::Array.new(File.join(dir, "test.db"))
+    GrnMini::tmpdb do
+      array = GrnMini::Array.new
     end
   end
 
   def test_add
-    GrnMini::Array.tmpdb do |array|
+    GrnMini::tmpdb do
+      array = GrnMini::Array.new
+
       array.add(text:"aaa", number:1)
       assert_equal 1, array.size
 
@@ -19,7 +21,9 @@ class TestGrnMiniArray < MiniTest::Unit::TestCase
   end
 
   def test_select
-    GrnMini::Array.tmpdb do |array|
+    GrnMini::tmpdb do
+      array = GrnMini::Array.new
+
       array << {text:"aaa", number:1}
       array << {text:"bbb", number:2}
       array << {text:"ccc", number:3}
@@ -32,7 +36,9 @@ class TestGrnMiniArray < MiniTest::Unit::TestCase
   end
 
   def test_select2
-    GrnMini::Array.tmpdb do |array|
+    GrnMini::tmpdb do
+      array = GrnMini::Array.new
+
       array << {text:"aaa", number:1}
       array << {text:"bbb", number:2}
       array << {text:"bbb", number:20}
@@ -48,7 +54,9 @@ class TestGrnMiniArray < MiniTest::Unit::TestCase
   end
 
   def test_size
-    GrnMini::Array.tmpdb do |array|
+    GrnMini::tmpdb do
+      array = GrnMini::Array.new
+
       assert_equal 0, array.size
       assert_equal 0, array.length
       
@@ -60,7 +68,9 @@ class TestGrnMiniArray < MiniTest::Unit::TestCase
   end
 
   def test_empty?
-    GrnMini::Array.tmpdb do |array|
+    GrnMini::tmpdb do
+      array = GrnMini::Array.new
+
       assert_equal true, array.empty?
 
       array << {text:"aaa", number:1}
@@ -69,7 +79,9 @@ class TestGrnMiniArray < MiniTest::Unit::TestCase
   end
 
   def test_each
-    GrnMini::Array.tmpdb do |array|
+    GrnMini::tmpdb do
+      array = GrnMini::Array.new
+
       array << {text:"aaa", number:1}
       array << {text:"bbb", number:2}
       array << {text:"ccc", number:3}
@@ -91,7 +103,9 @@ class TestGrnMiniArray < MiniTest::Unit::TestCase
   end
 
   def test_read_by_id
-    GrnMini::Array.tmpdb do |array|
+    GrnMini::tmpdb do
+      array = GrnMini::Array.new
+
       array << {text:"aaa", number:1}
       array << {text:"bbb", number:2}
       array << {text:"ccc", number:3}
@@ -111,7 +125,9 @@ class TestGrnMiniArray < MiniTest::Unit::TestCase
   end
 
   def test_write_by_id
-    GrnMini::Array.tmpdb do |array|
+    GrnMini::tmpdb do
+      array = GrnMini::Array.new
+
       array << {text:"aaa", number:1}
       array << {text:"bbb", number:2}
       array << {text:"ccc", number:3}
@@ -128,7 +144,9 @@ class TestGrnMiniArray < MiniTest::Unit::TestCase
   end
 
   def test_delete_by_id
-    GrnMini::Array.tmpdb do |array|
+    GrnMini::tmpdb do
+      array = GrnMini::Array.new
+
       array << {text:"aaa", number:1}
       array << {text:"bbb", number:2}
       array << {text:"ccc", number:3}
@@ -163,7 +181,9 @@ class TestGrnMiniArray < MiniTest::Unit::TestCase
   end
 
   def test_delete_by_block
-    GrnMini::Array.tmpdb do |array|
+    GrnMini::tmpdb do
+      array = GrnMini::Array.new
+
       array << {text:"bbb", number:2}
       array << {text:"ccc", number:3}
       array << {text:"aaa", number:1}
@@ -179,7 +199,9 @@ class TestGrnMiniArray < MiniTest::Unit::TestCase
   end
 
   def test_float_column
-    GrnMini::Array.tmpdb do |array| 
+    GrnMini::tmpdb do
+      array = GrnMini::Array.new
+
       array << {text:"aaaa", float: 1.5}
       array << {text:"bbbb", float: 2.5}
       array << {text:"cccc", float: 3.5}
@@ -192,7 +214,9 @@ class TestGrnMiniArray < MiniTest::Unit::TestCase
   end
 
   def test_time_column
-    GrnMini::Array.tmpdb do |array| 
+    GrnMini::tmpdb do
+      array = GrnMini::Array.new
+
       array << {text:"aaaa", timestamp: Time.new(2013)} # 2013-01-01
       array << {text:"bbbb", timestamp: Time.new(2014)} # 2014-01-01
       array << {text:"cccc", timestamp: Time.new(2015)} # 2015-01-01
@@ -206,7 +230,9 @@ class TestGrnMiniArray < MiniTest::Unit::TestCase
   end
 
   def test_record_attributes
-    GrnMini::Array.tmpdb do |array| 
+    GrnMini::tmpdb do
+      array = GrnMini::Array.new
+
       array << {text:"aaaa", int: 1}
       array << {text:"bbbb", int: 2}
       array << {text:"cccc", int: 3}
@@ -218,7 +244,9 @@ class TestGrnMiniArray < MiniTest::Unit::TestCase
   end
 
   def test_assign_long_text_to_short_text
-    GrnMini::Array.tmpdb do |array| 
+    GrnMini::tmpdb do
+      array = GrnMini::Array.new
+
       array << {filename:"a.txt"}
       array << {filename:"a"*4095 + ".txt" } # Over 4095 byte (ShortText limit)
 
@@ -228,7 +256,9 @@ class TestGrnMiniArray < MiniTest::Unit::TestCase
   end
 
   def test_grn_object
-    GrnMini::Array.tmpdb do |array| 
+    GrnMini::tmpdb do
+      array = GrnMini::Array.new
+
       array << {text: "aaaa", filename:"a.txt", int: 1, float: 1.5, time: Time.at(2001)}
 
       raw = array.grn
@@ -251,7 +281,9 @@ class TestGrnMiniArray < MiniTest::Unit::TestCase
   end
 
   def test_sort
-    GrnMini::Array.tmpdb do |array| 
+    GrnMini::tmpdb do
+      array = GrnMini::Array.new
+
       array << {name:"Tanaka",  age: 11, height: 162.5}
       array << {name:"Suzuki",  age: 31, height: 170.0}
       array << {name:"Hayashi", age: 21, height: 175.4}
@@ -275,7 +307,9 @@ class TestGrnMiniArray < MiniTest::Unit::TestCase
   end
 
   def test_group_from_array
-    GrnMini::Array.tmpdb do |array| 
+    GrnMini::tmpdb do
+      array = GrnMini::Array.new
+
       array << {text:"aaaa.txt", suffix:"txt", type:1}
       array << {text:"aaaa.doc", suffix:"doc", type:2}
       array << {text:"aabb.txt", suffix:"txt", type:2}
@@ -289,7 +323,9 @@ class TestGrnMiniArray < MiniTest::Unit::TestCase
   end
 
   def test_group_from_selection_results
-    GrnMini::Array.tmpdb do |array|
+    GrnMini::tmpdb do
+      array = GrnMini::Array.new
+
       array << {text:"aaaa", suffix:"txt"}
       array << {text:"aaaa", suffix:"doc"}
       array << {text:"aaaa", suffix:"txt"}
@@ -305,7 +341,9 @@ class TestGrnMiniArray < MiniTest::Unit::TestCase
   end
 
   def test_text_snippet_from_selection_results
-    GrnMini::Array.tmpdb do |array|
+    GrnMini::tmpdb do
+      array = GrnMini::Array.new
+
       array << {text: <<EOF, filename: "aaa.txt"}
 [1] This is a pen pep pea pek pet.
 ------------------------------
@@ -332,7 +370,9 @@ EOF
   end
 
   def test_html_snippet_from_selection_results
-    GrnMini::Array.tmpdb do |array|
+    GrnMini::tmpdb do
+      array = GrnMini::Array.new
+
       array << {text: <<EOF, filename: "aaa.txt"}
 <html>
   <div>This is a pen pep pea pek pet.</div>
@@ -350,7 +390,9 @@ EOF
   end
 
   def test_paginate
-    GrnMini::Array.tmpdb do |array|
+    GrnMini::tmpdb do
+      array = GrnMini::Array.new
+
       array << {text: "aaaa", filename: "1.txt"}
       array << {text: "aaaa aaaa", filename: "2a.txt"}
       array << {text: "aaaa aaaa aaaa", filename: "3.txt"}
@@ -379,12 +421,13 @@ EOF
   def test_multi_table
     Dir.mktmpdir do |dir|
       GrnMini::create_or_open(File.join(dir, "test.db"))
-      users = GrnMini::Array.new(name: "Users")
+      
+      users = GrnMini::Array.new("Users")
       users << {name: "aaa", age: 10}
       users << {name: "bbb", age: 20}
       users << {name: "ccc", age: 30}
       
-      articles = GrnMini::Array.new(name: "Articles")
+      articles = GrnMini::Array.new("Articles")
       articles << {title: "Hello", text: "hello everyone."}
 
       assert Groonga["Users"]
@@ -397,12 +440,12 @@ EOF
 
   def test_multi_table_select
     GrnMini::tmpdb do
-      users = GrnMini::Array.new(name: "Users")
+      users = GrnMini::Array.new("Users")
       users << {name: "aaa", age: 10, text: ""}
       users << {name: "bbb", age: 20}
       users << {name: "ccc", age: 30}
       
-      articles = GrnMini::Array.new(name: "Articles")
+      articles = GrnMini::Array.new("Articles")
       articles << {title: "1", text: "111 aaa"}
       articles << {title: "2", text: "222 bbb"}
       articles << {title: "3", text: "333 ccc"}

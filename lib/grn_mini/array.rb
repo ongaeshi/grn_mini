@@ -1,28 +1,14 @@
 require 'grn_mini/util'
 require 'groonga'
-require 'tmpdir'
 
 module GrnMini
   class Array
     attr_accessor :grn
     include Enumerable
 
-    def self.tmpdb
-      Dir.mktmpdir do |dir|
-        # p dir
-        yield self.new(File.join(dir, "tmp.db"))
-      end
-    end
-
-    def initialize(arg)
-      if arg.is_a?(String)
-        GrnMini::create_or_open(arg)
-        @name = "Array"
-      else
-        @name = arg[:name]
-      end
-      
-      @grn = Groonga[@name] || Groonga::Array.create(name: @name, persistent: true)
+    def initialize(name = nil)
+      @name  = name || "Array"
+      @grn   = Groonga[@name] || Groonga::Array.create(name: @name, persistent: true)
       @terms = Groonga["Terms"] || Groonga::PatriciaTrie.create(name: "Terms", key_normalize: true, default_tokenizer: "TokenBigramSplitSymbolAlphaDigit")
     end
 

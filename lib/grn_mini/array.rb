@@ -16,14 +16,8 @@ module GrnMini
 
     def initialize(path)
       Util::create_or_open(path)
-
-      unless Groonga["Array"]
-        @grn = Groonga::Array.create(name: "Array", persistent: true) 
-        @terms = Groonga::PatriciaTrie.create(name: "Terms", key_normalize: true, default_tokenizer: "TokenBigramSplitSymbolAlphaDigit")
-      else
-        @grn = Groonga["Array"]
-        @terms = Groonga["Terms"]
-      end
+      @grn = Groonga["Array"] || Groonga::Array.create(name: "Array", persistent: true)
+      @terms = Groonga["Terms"] || Groonga::PatriciaTrie.create(name: "Terms", key_normalize: true, default_tokenizer: "TokenBigramSplitSymbolAlphaDigit")
     end
 
     def add(hash)

@@ -378,7 +378,7 @@ EOF
 
   def test_multi_table
     Dir.mktmpdir do |dir|
-      GrnMini::Util::create_or_open(File.join(dir, "test.db"))
+      GrnMini::create_or_open(File.join(dir, "test.db"))
       users = GrnMini::Array.new(name: "Users")
       users << {name: "aaa", age: 10}
       users << {name: "bbb", age: 20}
@@ -392,6 +392,27 @@ EOF
 
       assert Groonga["Articles"]
       assert_equal 1, articles.size
+    end
+  end
+
+  def test_multi_table_select
+    GrnMini::tmpdb do
+      users = GrnMini::Array.new(name: "Users")
+      users << {name: "aaa", age: 10, text: ""}
+      users << {name: "bbb", age: 20}
+      users << {name: "ccc", age: 30}
+      
+      articles = GrnMini::Array.new(name: "Articles")
+      articles << {title: "1", text: "111 aaa"}
+      articles << {title: "2", text: "222 bbb"}
+      articles << {title: "3", text: "333 ccc"}
+
+      results = users.select("222 OR ccc")
+      assert_equal 0, results.size
+      
+      results = articles.select("222 OR ccc")
+      assert_equal 2, results.size
+      assert_equal "2", results.first.title
     end
   end
 end

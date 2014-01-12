@@ -375,4 +375,23 @@ EOF
       assert_equal "1.txt", page_entries.first.filename
     end
   end
+
+  def test_multi_table
+    Dir.mktmpdir do |dir|
+      GrnMini::Util::create_or_open(File.join(dir, "test.db"))
+      users = GrnMini::Array.new(name: "Users")
+      users << {name: "aaa", age: 10}
+      users << {name: "bbb", age: 20}
+      users << {name: "ccc", age: 30}
+      
+      articles = GrnMini::Array.new(name: "Articles")
+      articles << {title: "Hello", text: "hello everyone."}
+
+      assert Groonga["Users"]
+      assert_equal 3, users.size
+
+      assert Groonga["Articles"]
+      assert_equal 1, articles.size
+    end
+  end
 end

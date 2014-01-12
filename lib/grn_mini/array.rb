@@ -14,9 +14,15 @@ module GrnMini
       end
     end
 
-    def initialize(path)
-      Util::create_or_open(path)
-      @grn = Groonga["Array"] || Groonga::Array.create(name: "Array", persistent: true)
+    def initialize(arg)
+      if arg.is_a?(String)
+        Util::create_or_open(arg)
+        @name = "Array"
+      else
+        @name = arg[:name]
+      end
+      
+      @grn = Groonga[@name] || Groonga::Array.create(name: @name, persistent: true)
       @terms = Groonga["Terms"] || Groonga::PatriciaTrie.create(name: "Terms", key_normalize: true, default_tokenizer: "TokenBigramSplitSymbolAlphaDigit")
     end
 
@@ -34,7 +40,7 @@ module GrnMini
             @grn.define_column(column, "Int32")
           else
             @grn.define_column(column, "ShortText")
-            @terms.define_index_column("array_#{column}", @grn, source: "Array.#{column}", with_position: true)
+            @terms.define_index_column("array_#{column}", @grn, source: "#{@name}.#{column}", with_position: true)
           end
         end
       end

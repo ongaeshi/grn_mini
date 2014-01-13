@@ -10,27 +10,33 @@ module GrnMini
       @name  = name || "Array"
       @grn   = Groonga[@name] || Groonga::Array.create(name: @name, persistent: true)
       @terms = Groonga["Terms"] || Groonga::PatriciaTrie.create(name: "Terms", key_normalize: true, default_tokenizer: "TokenBigramSplitSymbolAlphaDigit")
+      @setup_columns_once = false
+    end
+
+    def setup_columns(hash)
+      hash.each do |key, value|
+        column = key.to_s
+
+        # @todo Need define_index_column ?
+        if value.is_a?(Time)
+          @grn.define_column(column, "Time")
+        elsif value.is_a?(Float)
+          @grn.define_column(column, "Float")
+        elsif value.is_a?(Numeric)
+          @grn.define_column(column, "Int32")
+        elsif value.is_a?(String)
+          @grn.define_column(column, "ShortText")
+          @terms.define_index_column("#{@name}_#{column}", @grn, source: "#{@name}.#{column}", with_position: true)
+        else
+          raise
+        end
+      end
+
+      @setup_columns_once = true
     end
 
     def add(hash)
-      if @grn.empty?
-        hash.each do |key, value|
-          column = key.to_s
-
-          # @todo Need define_index_column ?
-          if value.is_a?(Time)
-            @grn.define_column(column, "Time")
-          elsif value.is_a?(Float)
-            @grn.define_column(column, "Float")
-          elsif value.is_a?(Numeric)
-            @grn.define_column(column, "Int32")
-          else
-            @grn.define_column(column, "ShortText")
-            @terms.define_index_column("#{@name}_#{column}", @grn, source: "#{@name}.#{column}", with_position: true)
-          end
-        end
-      end
-      
+      setup_columns(hash) unless @setup_columns_once
       @grn.add(hash)
     end
 

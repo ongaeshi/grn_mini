@@ -458,4 +458,19 @@ EOF
       assert_equal "2", results.first.title
     end
   end
+
+  def test_setup_columns
+    GrnMini::tmpdb do
+      array = GrnMini::Array.new
+
+      array.setup_columns(
+        name: "",
+        age:  0,
+      )
+
+      array << {name: "bbb", age: 20 }
+      assert_raises(Groonga::NoSuchColumn) { array << {name: "aaa", age: 10, text: ""} }
+      assert_equal 2, array.size
+    end
+  end
 end

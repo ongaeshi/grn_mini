@@ -27,6 +27,10 @@ module GrnMini
         elsif value.is_a?(String)
           @grn.define_column(column, "ShortText")
           @terms.define_index_column("#{@name}_#{column}", @grn, source: "#{@name}.#{column}", with_position: true)
+        elsif value.is_a?(GrnMini::Array)
+          @grn.define_column(column, value.grn.name)
+        elsif value.is_a?(Groonga::Table)
+          @grn.define_column(column, value.name)
         else
           raise
         end

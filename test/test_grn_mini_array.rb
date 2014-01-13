@@ -473,4 +473,27 @@ EOF
       assert_equal 2, array.size
     end
   end
+
+  def test_setup_columns_groonga_table
+    GrnMini::tmpdb do
+      users = GrnMini::Array.new("UserName")
+
+      users.setup_columns(
+        parent: users,
+      )
+
+      users << {}
+      users << { parent: users[1] }
+      users << { parent: users[2] }
+
+      # No error ..
+      # users << { parent: 123456 }
+      # users << { parent: 1.5 }
+      # users << { parent: Time.now }
+
+      assert_equal      nil, users[1].parent
+      assert_equal users[1], users[2].parent
+      assert_equal users[1], users[3].parent.parent
+    end
+  end
 end

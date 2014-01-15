@@ -548,4 +548,37 @@ EOF
       assert_equal 0.2, array[3].arrays[1].arrays[0].floats[1]
     end    
   end
+
+  def test_tweet
+    GrnMini::tmpdb do
+      users = GrnMini::Array.new("Users")
+      tweets = GrnMini::Array.new("Tweets")
+
+      users.setup_columns(name: "A Name"
+                          )
+      tweets.setup_columns(user: users,
+                           time: Time.new,
+                           text: "A Tweet.",
+                           replies: [tweets]
+                           )
+
+      users << { name: "AAA" }
+      users << { name: "BBB" }
+
+      tweets << { user: users[1], time: Time.at(1), text: "AAA Tweet 1" }
+      tweets << { user: users[2], time: Time.at(2), text: "BBB Tweet 1" }
+      tweets << { user: users[1], time: Time.at(3), text: "AAA Tweet 2" }
+      tweets << { user: users[1], time: Time.at(4), text: "Re: BBB Tweet 1" }
+      tweets << { user: users[2], time: Time.at(5), text: "Re: Re: BBB Tweet 1" }
+      tweets[3].replies = [tweets[4], tweets[5]]
+
+      # tweets.each do |record|
+      #   p record.attributes
+      # end
+
+      assert_equal 3, tweets.select("user:1").size
+      assert_equal "AAA Tweet 2", tweets.select("user:1 Tweet 2").first.text
+      assert_equal 2, tweets.select("user:2").size
+    end    
+  end
 end

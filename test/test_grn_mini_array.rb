@@ -524,4 +524,28 @@ EOF
       assert_equal 3, array[2].links.length
     end
   end
+
+  def test_setup_columns_vector2
+    GrnMini::tmpdb do
+      array = GrnMini::Array.new
+      array.setup_columns(strs:    [""],
+                          numbers: [0],
+                          floats:  [0.1],
+                          times:   [Time.new],
+                          arrays:  [array]
+                          )
+
+      array.add(strs: ["AAA", "BBB"],
+                numbers: [1, 2, 3],
+                floats: [0.1, 0.2, 0.3],
+                times:  [Time.at(0), Time.at(1), Time.at(3)],
+                arrays: []
+                )
+      array.add(arrays: [array[1]])
+      array.add(arrays: [array[1], array[2]])
+
+      # First elements is [1..N], Second and subsequent elements is [0..N-1].
+      assert_equal 0.2, array[3].arrays[1].arrays[0].floats[1]
+    end    
+  end
 end

@@ -17,26 +17,37 @@ module GrnMini
       hash.each do |key, value|
         column = key.to_s
 
-        # @todo Need define_index_column ?
-        if value.is_a?(Time)
-          @grn.define_column(column, "Time")
-        elsif value.is_a?(Float)
-          @grn.define_column(column, "Float")
-        elsif value.is_a?(Numeric)
-          @grn.define_column(column, "Int32")
-        elsif value.is_a?(String)
-          @grn.define_column(column, "ShortText")
+        if value.is_a?(String)
+          @grn.define_column(column, value_type(value))
           @terms.define_index_column("#{@name}_#{column}", @grn, source: "#{@name}.#{column}", with_position: true)
-        elsif value.is_a?(GrnMini::Array)
-          @grn.define_column(column, value.grn.name)
-        elsif value.is_a?(Groonga::Table)
-          @grn.define_column(column, value.name)
+        elsif value.is_a?(::Array)
+          @grn.define_column(column, value_type(value), type: :vector)
         else
-          raise
+          @grn.define_column(column, value_type(value))
         end
       end
 
       @setup_columns_once = true
+    end
+
+    def value_type(value)
+      if value.is_a?(Time)
+        "Time"
+      elsif value.is_a?(Float)
+        "Float"
+      elsif value.is_a?(Numeric)
+        "Int32"
+      elsif value.is_a?(String)
+        "ShortText"
+      elsif value.is_a?(GrnMini::Array)
+        value.grn.name
+      elsif value.is_a?(Groonga::Table)
+        value.name
+      elsif value.is_a?(::Array)
+        value_type(value.first)
+      else
+        raise
+      end
     end
 
     def add(hash)

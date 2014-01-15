@@ -476,7 +476,7 @@ EOF
 
   def test_setup_columns_groonga_table
     GrnMini::tmpdb do
-      users = GrnMini::Array.new("UserName")
+      users = GrnMini::Array.new("Users")
 
       users.setup_columns(
         parent: users,
@@ -494,6 +494,34 @@ EOF
       assert_equal      nil, users[1].parent
       assert_equal users[1], users[2].parent
       assert_equal users[1], users[3].parent.parent
+    end
+  end
+
+  def test_setup_columns_vector
+    GrnMini::tmpdb do
+      array = GrnMini::Array.new
+      array.setup_columns(links:[""])
+
+      array << {}
+      assert_equal [], array[1].links
+
+      # Nothing happens ..
+      array[1].links << "http://ongaeshi.me"
+      assert_equal 0, array[1].links.size
+
+      # Use links=
+      array[1].links = ["http://ongaeshi.me", "http://yahoo.co.jp"]
+      assert_equal 2, array[1].links.size
+
+      array << { links: ["aaa", "bbb", "ccc"]}
+      array << { links: ["AAA"]}
+
+      # array.each do |record|
+      #   p record.attributes
+      # end
+
+      assert_equal 3, array.length
+      assert_equal 3, array[2].links.length
     end
   end
 end

@@ -581,4 +581,11 @@ EOF
       assert_equal 2, tweets.select("user:2").size
     end    
   end
+
+  def test_not_support_column_type
+    GrnMini::tmpdb do
+      array = GrnMini::Array.new
+      assert_raises(GrnMini::NotSupportColumnType) { array.setup_columns(error: Hash) } 
+    end    
+  end
 end

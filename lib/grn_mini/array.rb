@@ -2,6 +2,8 @@ require 'grn_mini/util'
 require 'groonga'
 
 module GrnMini
+  class NotSupportColumnType < RuntimeError; end
+
   class Array
     attr_accessor :grn
     include Enumerable
@@ -46,7 +48,7 @@ module GrnMini
       elsif value.is_a?(::Array)
         value_type(value.first)
       else
-        raise
+        raise NotSupportColumnType, value
       end
     end
 

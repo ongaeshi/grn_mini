@@ -1,6 +1,4 @@
-require 'grn_mini/util'
 require 'grn_mini/table'
-require 'groonga'
 
 module GrnMini
   class NotSupportColumnType < RuntimeError; end

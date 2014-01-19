@@ -4,7 +4,7 @@ module GrnMini
   class Hash < Table
     def initialize(name = "Hash")
       super(name,
-            Groonga["Hash"] || Groonga::Hash.create(name: "Hash", persistent: true))
+            Groonga[name] || Groonga::Hash.create(name: name, persistent: true))
     end
 
     def add(key, values)

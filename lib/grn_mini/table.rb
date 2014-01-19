@@ -31,7 +31,7 @@ module GrnMini
 
       @setup_columns_once = true
     end
-
+    
     def value_type(value)
       if value.is_a?(Time)
         "Time"
@@ -41,7 +41,7 @@ module GrnMini
         "Int32"
       elsif value.is_a?(String)
         "ShortText"
-      elsif value.is_a?(GrnMini::Array) # TODO: GrnMini::Table
+      elsif value.is_a?(GrnMini::Table)
         value.grn.name
       elsif value.is_a?(Groonga::Table)
         value.name
@@ -59,6 +59,8 @@ module GrnMini
     def size
       @grn.size
     end
+
+    alias length size
 
     def empty?
       size == 0

@@ -3,7 +3,8 @@ require 'grn_mini/table'
 module GrnMini
   class Hash < Table
     def initialize(name = "Hash")
-      super(name, Groonga["Hash"] || Groonga::Hash.create(name: "Hash", persistent: true))
+      super(name,
+            Groonga["Hash"] || Groonga::Hash.create(name: "Hash", persistent: true))
     end
 
     def add(key, values)
@@ -19,15 +20,10 @@ module GrnMini
       add(key, value)
     end
 
-    alias length size           # TODO: BUG?
-
-    class IdIsGreaterThanZero < RuntimeError; end
-
     def delete(id = nil, &block)
       if block_given?
         @grn.delete(&block)
       else
-        raise IdIsGreaterThanZero if id == 0 # TODO: BUG
         @grn.delete(id)
       end
     end

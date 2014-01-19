@@ -5,7 +5,8 @@ module GrnMini
 
   class Array < Table
     def initialize(name = "Array")
-      super(name, Groonga[name] || Groonga::Array.create(name: name, persistent: true))
+      super(name,
+            Groonga[name] || Groonga::Array.create(name: name, persistent: true))
     end
 
     def add(hash)
@@ -15,10 +16,8 @@ module GrnMini
 
     alias << add
 
-    alias length size
-
     class IdIsGreaterThanZero < RuntimeError; end
-
+    
     def [](id)
       raise IdIsGreaterThanZero if id == 0
       @grn[id]

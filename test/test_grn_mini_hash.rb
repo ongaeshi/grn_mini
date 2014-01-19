@@ -291,4 +291,24 @@ class TestGrnMiniHash < MiniTest::Unit::TestCase
       assert_equal ["doc", 1], [groups[1].key, groups[1].n_sub_records]
     end
   end
+
+  def test_select_table_element
+    GrnMini::tmpdb do
+      links = GrnMini::Hash.new("Links")
+      links.setup_columns(next: links)
+
+      links["aaa"] = {}
+      links["bbb"] = {}
+      links["ccc"] = {}
+
+      links["aaa"].next = links["bbb"]
+      links["bbb"].next = links["ccc"]
+      links["ccc"].next = links["aaa"]
+
+      assert_equal links["bbb"], links["aaa"].next
+
+      assert_equal links["ccc"], links.select("next: aaa").first.key
+    end
+  end
+
 end

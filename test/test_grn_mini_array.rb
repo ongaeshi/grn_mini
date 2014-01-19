@@ -544,7 +544,7 @@ EOF
       array.add(arrays: [array[1]])
       array.add(arrays: [array[1], array[2]])
 
-      # First elements is [1..N], Second and subsequent elements is [0..N-1].
+      # First element is [1..N], Second and subsequent elements is [0..N-1].
       assert_equal 0.2, array[3].arrays[1].arrays[0].floats[1]
     end    
   end

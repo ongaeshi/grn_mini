@@ -311,4 +311,30 @@ class TestGrnMiniHash < MiniTest::Unit::TestCase
     end
   end
 
+  def test_select_table_elements
+    GrnMini::tmpdb do
+      nodes = GrnMini::Hash.new("Nodes")
+      nodes.setup_columns(childs: [nodes])
+
+      # Need define_index_column, now.
+      nodes.grn.define_index_column("index_childs", nodes.grn, source: "Nodes.childs")
+
+      nodes["aaa"] = {}
+      nodes["bbb"] = {}
+      nodes["ccc"] = {}
+      nodes["ddd"] = {}
+      nodes["eee"] = {}
+
+      nodes["aaa"].childs = [nodes["bbb"], nodes["ccc"]]
+      nodes["bbb"].childs = nodes["bbb"].childs + [nodes["ddd"]]
+      nodes["bbb"].childs = nodes["bbb"].childs + [nodes["eee"]]
+
+      assert_equal 2, nodes["aaa"].childs.size
+      assert_equal 2, nodes["bbb"].childs.size
+
+      assert_equal nodes["aaa"], nodes.select("childs: bbb").first.key
+      assert_equal 0, nodes.select("childs: aaa").size
+    end
+  end
+
 end

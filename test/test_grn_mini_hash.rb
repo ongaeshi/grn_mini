@@ -60,12 +60,10 @@ class TestGrnMiniHash < MiniTest::Unit::TestCase
       hash = GrnMini::Hash.new
 
       assert_equal 0, hash.size
-      assert_equal 0, hash.length
       
       hash["a"] = {text:"aaa", number:1}
       hash["b"] = {text:"bbb", number:2}
       assert_equal 2, hash.size
-      assert_equal 2, hash.length
     end
   end
 

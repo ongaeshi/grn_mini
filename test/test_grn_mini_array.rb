@@ -58,12 +58,10 @@ class TestGrnMiniArray < MiniTest::Unit::TestCase
       array = GrnMini::Array.new
 
       assert_equal 0, array.size
-      assert_equal 0, array.length
       
       array << {text:"aaa", number:1}
       array << {text:"bbb", number:2}
       assert_equal 2, array.size
-      assert_equal 2, array.length
     end
   end
 
@@ -520,8 +518,8 @@ EOF
       #   p record.attributes
       # end
 
-      assert_equal 3, array.length
-      assert_equal 3, array[2].links.length
+      assert_equal 3, array.size
+      assert_equal 3, array[2].links.size
     end
   end
 

@@ -68,8 +68,6 @@ module GrnMini
       @grn.size
     end
 
-    alias length size
-
     def empty?
       size == 0
     end

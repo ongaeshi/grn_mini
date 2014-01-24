@@ -29,7 +29,7 @@ class TestGrnMiniHash < MiniTest::Unit::TestCase
       hash["b"] = {text:"bbb", number:2}
       hash["c"] = {text:"ccc", number:3}
 
-      results = hash.select("bb")
+      results = hash.select("text:@bb")
 
       assert_equal 1, results.size
       assert_equal "b", results.first.key.key
@@ -46,7 +46,7 @@ class TestGrnMiniHash < MiniTest::Unit::TestCase
       hash["c"] = {text:"bbb", number:20}
       hash["d"] = {text:"ccc", number:3}
 
-      results = hash.select("bb number:<10")
+      results = hash.select("text:@bb number:<10")
 
       assert_equal 1, results.size
       assert_equal "b", results.first.key.key

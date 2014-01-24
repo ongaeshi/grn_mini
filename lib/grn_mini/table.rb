@@ -60,36 +60,8 @@ module GrnMini
       end
     end
 
-    SELECT_OPTIONS = {default_column: "text"}
-
     def select(*args, &block)
-      if block_given?
-        case args.length
-        when 0
-          options = SELECT_OPTIONS
-        when 1
-          options = args[0]
-        else
-          raise ArgumentError
-        end
-        
-        @grn.select(options, &block)
-        
-      else
-        case args.length
-        when 0
-          query, options = "", SELECT_OPTIONS
-        when 1
-          query, options = args[0], SELECT_OPTIONS
-        when 2
-          query, options = args[0], args[1]
-        else
-          raise ArgumentError
-        end
-
-        @grn.select(query, options)
-
-      end
+      @grn.select(*args, &block)
     end
     
     def size

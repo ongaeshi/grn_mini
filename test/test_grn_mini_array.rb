@@ -28,7 +28,7 @@ class TestGrnMiniArray < MiniTest::Unit::TestCase
       array << {text:"bbb", number:2}
       array << {text:"ccc", number:3}
 
-      results = array.select("bb")
+      results = array.select("text:@bb")
 
       assert_equal 1, results.size
       assert_equal "bbb", results.first.text
@@ -44,7 +44,7 @@ class TestGrnMiniArray < MiniTest::Unit::TestCase
       array << {text:"bbb", number:20}
       array << {text:"ccc", number:3}
 
-      results = array.select("bb number:<10")
+      results = array.select("text:@bb number:<10")
 
       assert_equal 1, results.size
       assert_equal 2, results.first.key.id
@@ -331,7 +331,7 @@ class TestGrnMiniArray < MiniTest::Unit::TestCase
       array << {text:"aaaa", suffix:"txt"}
       array << {text:"cccc", suffix:"txt"}
 
-      results = array.select("aa")
+      results = array.select("text:@aa")
       groups = GrnMini::Util::group_with_sort(results, "suffix")
 
       assert_equal 2, groups.size
@@ -358,7 +358,7 @@ class TestGrnMiniArray < MiniTest::Unit::TestCase
 ------------------------------
 EOF
 
-      results = array.select("This pen")
+      results = array.select("This pen", default_column: "text")
       snippet = GrnMini::Util::text_snippet_from_selection_results(results)
 
       record = results.first
@@ -379,7 +379,7 @@ EOF
 </html>
 EOF
 
-      results = array.select("This pen")
+      results = array.select("text:@This text:@pen")
       snippet = GrnMini::Util::html_snippet_from_selection_results(results)
 
       record = results.first
@@ -400,7 +400,7 @@ EOF
       array << {text: "aaaa aaaa", filename: "2c.txt"}
       array << {text: "aaaa aaaa", filename: "2d.txt"}
 
-      results = array.select("aaaa")
+      results = array.select { |r| r.text =~ "aaaa" }
 
       # page1
       page_entries = results.paginate([["_score", :desc]], :page => 1, :size => 5)
@@ -450,10 +450,10 @@ EOF
       articles << {title: "2", text: "222 bbb"}
       articles << {title: "3", text: "333 ccc"}
 
-      results = users.select("222 OR ccc")
+      results = users.select("222 OR ccc", default_column: "text")
       assert_equal 0, results.size
       
-      results = articles.select("222 OR ccc")
+      results = articles.select("222 OR ccc", default_column: "text")
       assert_equal 2, results.size
       assert_equal "2", results.first.title
     end
@@ -577,7 +577,7 @@ EOF
       # end
 
       assert_equal 3, tweets.select("user:1").size
-      assert_equal "AAA Tweet 2", tweets.select("user:1 Tweet 2").first.text
+      assert_equal "AAA Tweet 2", tweets.select("user:1 text:@Tweet text:@2").first.text
       assert_equal 2, tweets.select("user:2").size
     end    
   end

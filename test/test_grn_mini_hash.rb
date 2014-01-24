@@ -373,7 +373,7 @@ class TestGrnMiniHash < MiniTest::Unit::TestCase
   end
 
   def select_keys(table)
-    table.grn.select{ |record|
+    table.select { |record|
       yield record
     }.map { |record| record._key }.sort
   end

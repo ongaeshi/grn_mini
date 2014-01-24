@@ -317,10 +317,6 @@ class TestGrnMiniHash < MiniTest::Unit::TestCase
       nodes = GrnMini::Hash.new("Nodes")
       nodes.setup_columns(childs: [nodes], numbers: [0])
 
-      # Need define_index_column, now.
-      nodes.grn.define_index_column("index_childs", nodes.grn, source: "Nodes.childs")
-      # nodes.grn.define_index_column("index_numbers", nodes.grn, source: "Nodes.numbers")
-
       nodes["aaa"] = {}
       nodes["bbb"] = {}
       nodes["ccc"] = {}
@@ -347,8 +343,6 @@ class TestGrnMiniHash < MiniTest::Unit::TestCase
 
       users.setup_columns(name: "", favorites: [articles])
       articles.setup_columns(author: users, text: "")
-
-      articles.grn.define_index_column("index_favorites", users.grn, source: "Users.favorites")
 
       users["aaa"] = {name: "Mr.A"}
       users["bbb"] = {name: "Mr.B"}

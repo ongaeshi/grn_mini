@@ -24,6 +24,14 @@ module GrnMini
           @terms.define_index_column("#{@name}_#{column}", @grn, source: "#{@name}.#{column}", with_position: true)
         elsif value.is_a?(::Array)
           @grn.define_column(column, value_type(value), type: :vector)
+
+          elem = value.first
+          
+          if elem.is_a?(GrnMini::Table)
+            elem.grn.define_index_column("index_#{column}", @grn, source: "#{@grn.name}.#{column}")
+          elsif elem.is_a?(Groonga::Table)
+            elem.define_index_column("index_#{column}", @grn, source: "#{@grn.name}.#{column}")
+          end
         else
           @grn.define_column(column, value_type(value))
         end

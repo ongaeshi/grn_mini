@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 require 'minitest_helper'
 
 class TestGrnMiniHash < MiniTest::Unit::TestCase
@@ -311,13 +312,14 @@ class TestGrnMiniHash < MiniTest::Unit::TestCase
     end
   end
 
-  def test_select_table_elements
+  def test_nodes_table
     GrnMini::tmpdb do
       nodes = GrnMini::Hash.new("Nodes")
-      nodes.setup_columns(childs: [nodes])
+      nodes.setup_columns(childs: [nodes], numbers: [0])
 
       # Need define_index_column, now.
       nodes.grn.define_index_column("index_childs", nodes.grn, source: "Nodes.childs")
+      # nodes.grn.define_index_column("index_numbers", nodes.grn, source: "Nodes.numbers")
 
       nodes["aaa"] = {}
       nodes["bbb"] = {}
@@ -325,9 +327,10 @@ class TestGrnMiniHash < MiniTest::Unit::TestCase
       nodes["ddd"] = {}
       nodes["eee"] = {}
 
-      nodes["aaa"].childs = [nodes["bbb"], nodes["ccc"]]
-      nodes["bbb"].childs = nodes["bbb"].childs + [nodes["ddd"]]
-      nodes["bbb"].childs = nodes["bbb"].childs + [nodes["eee"]]
+      nodes["aaa"].childs = ["bbb", "ccc"]
+      # nodes["bbb"].childs = nodes["bbb"].childs + [nodes["ddd"]]
+      nodes["bbb"].childs += [nodes["ddd"]]
+      nodes["bbb"].childs += [nodes["eee"]] 
 
       assert_equal 2, nodes["aaa"].childs.size
       assert_equal 2, nodes["bbb"].childs.size
@@ -335,6 +338,50 @@ class TestGrnMiniHash < MiniTest::Unit::TestCase
       assert_equal nodes["aaa"], nodes.select("childs: bbb").first.key
       assert_equal 0, nodes.select("childs: aaa").size
     end
+  end
+  
+  def test_users_and_articles
+    GrnMini::tmpdb do
+      users = GrnMini::Hash.new("Users")
+      articles = GrnMini::Hash.new("Articles")
+
+      users.setup_columns(name: "", favorites: [articles])
+      articles.setup_columns(author: users, text: "")
+
+      articles.grn.define_index_column("index_favorites", users.grn, source: "Users.favorites")
+
+      users["aaa"] = {name: "Mr.A"}
+      users["bbb"] = {name: "Mr.B"}
+      users["ccc"] = {name: "Mr.C"}
+
+      articles["aaa:1"] = {author: "aaa", text: "111"}
+      articles["aaa:2"] = {author: "aaa", text: "222"}
+      articles["aaa:3"] = {author: "aaa", text: "333"}
+      articles["bbb:1"] = {author: "bbb", text: "111"}
+      articles["bbb:2"] = {author: "bbb", text: "222"}
+      articles["ccc:1"] = {author: "ccc", text: "111"}
+
+      users["aaa"].favorites = ["aaa:1", "bbb:2"]
+      users["bbb"].favorites = ["aaa:2"]
+      users["ccc"].favorites = ["aaa:1", "bbb:1", "ccc:1"]
+
+      assert_equal ["aaa", "ccc"], select_keys(users) { |record| record.favorites == "aaa:1" }
+      assert_equal ["bbb"], select_keys(users) { |record| record.favorites == "aaa:2" }
+      assert_equal [], select_keys(users) { |record| record.favorites == "aaa:3" }
+
+      assert_equal ["aaa", "ccc"], select_keys(users) { |record| record.favorites.text =~ "111" }
+      assert_equal ["aaa", "bbb"], select_keys(users) { |record| record.favorites.text =~ "222" }
+      assert_equal [], select_keys(users) { |record| record.favorites.text =~ "333" }
+
+      # assert_equal ["aaa", "ccc"], select_keys(users) { |record| record.favorites.text == "111" }      # TODO ==だと動かない
+      # assert_equal ["aaa", "ccc"], select_keys(users) { |record| record.favorites.author == "bbb" } # TODO 正しく動かない
+    end
+  end
+
+  def select_keys(table)
+    table.grn.select{ |record|
+      yield record
+    }.map { |record| record._key }.sort
   end
 
 end

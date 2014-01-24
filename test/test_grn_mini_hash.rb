@@ -1,14 +1,17 @@
+# -*- coding: utf-8 -*-
 require 'minitest_helper'
 
 class TestGrnMiniHash < MiniTest::Unit::TestCase
   def test_initialize
-    Dir.mktmpdir do |dir|
-      hash = GrnMini::Hash.new(File.join(dir, "test.db"))
+    GrnMini::tmpdb do
+      hash = GrnMini::Hash.new
     end
   end
 
   def test_add
-    GrnMini::Hash.tmpdb do |hash|
+    GrnMini::tmpdb do
+      hash = GrnMini::Hash.new
+
       hash.add("aaa", text:"aaa", number:1)
       assert_equal 1, hash.size
 
@@ -19,12 +22,14 @@ class TestGrnMiniHash < MiniTest::Unit::TestCase
   end
 
   def test_select
-    GrnMini::Hash.tmpdb do |hash|
+    GrnMini::tmpdb do
+      hash = GrnMini::Hash.new
+
       hash["a"] = {text:"aaa", number:1}
       hash["b"] = {text:"bbb", number:2}
       hash["c"] = {text:"ccc", number:3}
 
-      results = hash.select("bb")
+      results = hash.select("text:@bb")
 
       assert_equal 1, results.size
       assert_equal "b", results.first.key.key
@@ -33,13 +38,15 @@ class TestGrnMiniHash < MiniTest::Unit::TestCase
   end
 
   def test_select2
-    GrnMini::Hash.tmpdb do |hash|
+    GrnMini::tmpdb do
+      hash = GrnMini::Hash.new
+
       hash["a"] = {text:"aaa", number:1}
       hash["b"] = {text:"bbb", number:2}
       hash["c"] = {text:"bbb", number:20}
       hash["d"] = {text:"ccc", number:3}
 
-      results = hash.select("bb number:<10")
+      results = hash.select("text:@bb number:<10")
 
       assert_equal 1, results.size
       assert_equal "b", results.first.key.key
@@ -49,19 +56,21 @@ class TestGrnMiniHash < MiniTest::Unit::TestCase
   end
 
   def test_size
-    GrnMini::Hash.tmpdb do |hash|
+    GrnMini::tmpdb do
+      hash = GrnMini::Hash.new
+
       assert_equal 0, hash.size
-      assert_equal 0, hash.length
       
       hash["a"] = {text:"aaa", number:1}
       hash["b"] = {text:"bbb", number:2}
       assert_equal 2, hash.size
-      assert_equal 2, hash.length
     end
   end
 
   def test_empty?
-    GrnMini::Hash.tmpdb do |hash|
+    GrnMini::tmpdb do
+      hash = GrnMini::Hash.new
+
       assert_equal true, hash.empty?
 
       hash["a"] = {text:"aaa", number:1}
@@ -70,7 +79,9 @@ class TestGrnMiniHash < MiniTest::Unit::TestCase
   end
 
   def test_each
-    GrnMini::Hash.tmpdb do |hash|
+    GrnMini::tmpdb do
+      hash = GrnMini::Hash.new
+
       hash["c"] = {text:"ccc", number:3}
       hash["a"] = {text:"aaa", number:1}
       hash["b"] = {text:"bbb", number:2}
@@ -86,7 +97,9 @@ class TestGrnMiniHash < MiniTest::Unit::TestCase
   end
 
   def test_read_by_key
-    GrnMini::Hash.tmpdb do |hash|
+    GrnMini::tmpdb do
+      hash = GrnMini::Hash.new
+
       hash["a"] = {text:"aaa", number:1}
       hash["b"] = {text:"bbb", number:2}
       hash["c"] = {text:"ccc", number:3}
@@ -99,7 +112,9 @@ class TestGrnMiniHash < MiniTest::Unit::TestCase
   end
 
   def test_write_by_key
-    GrnMini::Hash.tmpdb do |hash|
+    GrnMini::tmpdb do
+      hash = GrnMini::Hash.new
+
       hash["a"] = {text:"aaa", number:1}
       hash["b"] = {text:"bbb", number:2}
       hash["c"] = {text:"ccc", number:3}
@@ -116,7 +131,9 @@ class TestGrnMiniHash < MiniTest::Unit::TestCase
   end
 
   def test_delete_by_id
-    GrnMini::Hash.tmpdb do |hash|
+    GrnMini::tmpdb do
+      hash = GrnMini::Hash.new
+
       hash["a"] = {text:"aaa", number:1}
       hash["b"] = {text:"bbb", number:2}
       hash["c"] = {text:"ccc", number:3}
@@ -133,7 +150,9 @@ class TestGrnMiniHash < MiniTest::Unit::TestCase
   end
 
   def test_delete_by_block
-    GrnMini::Hash.tmpdb do |hash|
+    GrnMini::tmpdb do
+      hash = GrnMini::Hash.new
+
       hash["a"] = {text:"aaa", number:1}
       hash["b"] = {text:"bbb", number:2}
       hash["c"] = {text:"ccc", number:3}
@@ -149,7 +168,9 @@ class TestGrnMiniHash < MiniTest::Unit::TestCase
   end
 
   def test_float_column
-    GrnMini::Hash.tmpdb do |hash| 
+    GrnMini::tmpdb do
+      hash = GrnMini::Hash.new
+
       hash["a"] = {text:"aaaa", float: 1.5}
       hash["b"] = {text:"bbbb", float: 2.5}
       hash["c"] = {text:"cccc", float: 3.5}
@@ -162,7 +183,9 @@ class TestGrnMiniHash < MiniTest::Unit::TestCase
   end
 
   def test_time_column
-    GrnMini::Hash.tmpdb do |hash| 
+    GrnMini::tmpdb do
+      hash = GrnMini::Hash.new
+
       hash["a"] = {text:"aaaa", timestamp: Time.new(2013)} # 2013-01-01
       hash["b"] = {text:"bbbb", timestamp: Time.new(2014)} # 2014-01-01
       hash["c"] = {text:"cccc", timestamp: Time.new(2015)} # 2015-01-01
@@ -176,7 +199,9 @@ class TestGrnMiniHash < MiniTest::Unit::TestCase
   end
 
   def test_record_attributes
-    GrnMini::Hash.tmpdb do |hash| 
+    GrnMini::tmpdb do
+      hash = GrnMini::Hash.new
+
       hash["a"] = {text:"aaaa", int: 1}
       hash["b"] = {text:"bbbb", int: 2}
       hash["c"] = {text:"cccc", int: 3}
@@ -188,7 +213,9 @@ class TestGrnMiniHash < MiniTest::Unit::TestCase
   end
 
   def test_assign_long_text_to_short_text
-    GrnMini::Hash.tmpdb do |hash| 
+    GrnMini::tmpdb do
+      hash = GrnMini::Hash.new
+
       hash["a"] = {filename:"a.txt"}
       hash["b"] = {filename:"a"*4095 + ".txt" } # Over 4095 byte (ShortText limit)
 
@@ -198,7 +225,9 @@ class TestGrnMiniHash < MiniTest::Unit::TestCase
   end
 
   def test_grn_object
-    GrnMini::Hash.tmpdb do |hash| 
+    GrnMini::tmpdb do
+      hash = GrnMini::Hash.new
+
       hash["a"] = {text: "aaaa", filename:"a.txt", int: 1, float: 1.5, time: Time.at(2001)}
 
       raw = hash.grn
@@ -221,7 +250,9 @@ class TestGrnMiniHash < MiniTest::Unit::TestCase
   end
 
   def test_sort
-    GrnMini::Hash.tmpdb do |hash| 
+    GrnMini::tmpdb do
+      hash = GrnMini::Hash.new
+
       hash["a"] = {name:"Tanaka",  age: 11, height: 162.5}
       hash["b"] = {name:"Suzuki",  age: 31, height: 170.0}
       hash["c"] = {name:"Hayashi", age: 21, height: 175.4}
@@ -245,7 +276,9 @@ class TestGrnMiniHash < MiniTest::Unit::TestCase
   end
 
   def test_group_from_hash
-    GrnMini::Hash.tmpdb do |hash| 
+    GrnMini::tmpdb do
+      hash = GrnMini::Hash.new
+
       hash["a"] = {text:"aaaa.txt", suffix:"txt", type:1}
       hash["b"] = {text:"aaaa.doc", suffix:"doc", type:2}
       hash["c"] = {text:"aabb.txt", suffix:"txt", type:2}
@@ -257,4 +290,90 @@ class TestGrnMiniHash < MiniTest::Unit::TestCase
       assert_equal ["doc", 1], [groups[1].key, groups[1].n_sub_records]
     end
   end
+
+  def test_select_table_element
+    GrnMini::tmpdb do
+      links = GrnMini::Hash.new("Links")
+      links.setup_columns(next: links)
+
+      links["aaa"] = {}
+      links["bbb"] = {}
+      links["ccc"] = {}
+
+      links["aaa"].next = links["bbb"]
+      links["bbb"].next = links["ccc"]
+      links["ccc"].next = links["aaa"]
+
+      assert_equal links["bbb"], links["aaa"].next
+
+      assert_equal links["ccc"], links.select("next: aaa").first.key
+    end
+  end
+
+  def test_nodes_table
+    GrnMini::tmpdb do
+      nodes = GrnMini::Hash.new("Nodes")
+      nodes.setup_columns(childs: [nodes], numbers: [0])
+
+      nodes["aaa"] = {}
+      nodes["bbb"] = {}
+      nodes["ccc"] = {}
+      nodes["ddd"] = {}
+      nodes["eee"] = {}
+
+      nodes["aaa"].childs = ["bbb", "ccc"]
+      # nodes["bbb"].childs = nodes["bbb"].childs + [nodes["ddd"]]
+      nodes["bbb"].childs += [nodes["ddd"]]
+      nodes["bbb"].childs += [nodes["eee"]] 
+
+      assert_equal 2, nodes["aaa"].childs.size
+      assert_equal 2, nodes["bbb"].childs.size
+
+      assert_equal nodes["aaa"], nodes.select("childs: bbb").first.key
+      assert_equal 0, nodes.select("childs: aaa").size
+    end
+  end
+  
+  def test_users_and_articles
+    GrnMini::tmpdb do
+      users = GrnMini::Hash.new("Users")
+      articles = GrnMini::Hash.new("Articles")
+
+      users.setup_columns(name: "", favorites: [articles])
+      articles.setup_columns(author: users, text: "")
+
+      users["aaa"] = {name: "Mr.A"}
+      users["bbb"] = {name: "Mr.B"}
+      users["ccc"] = {name: "Mr.C"}
+
+      articles["aaa:1"] = {author: "aaa", text: "111"}
+      articles["aaa:2"] = {author: "aaa", text: "222"}
+      articles["aaa:3"] = {author: "aaa", text: "333"}
+      articles["bbb:1"] = {author: "bbb", text: "111"}
+      articles["bbb:2"] = {author: "bbb", text: "222"}
+      articles["ccc:1"] = {author: "ccc", text: "111"}
+
+      users["aaa"].favorites = ["aaa:1", "bbb:2"]
+      users["bbb"].favorites = ["aaa:2"]
+      users["ccc"].favorites = ["aaa:1", "bbb:1", "ccc:1"]
+
+      assert_equal ["aaa", "ccc"], select_keys(users) { |record| record.favorites == "aaa:1" }
+      assert_equal ["bbb"], select_keys(users) { |record| record.favorites == "aaa:2" }
+      assert_equal [], select_keys(users) { |record| record.favorites == "aaa:3" }
+
+      assert_equal ["aaa", "ccc"], select_keys(users) { |record| record.favorites.text =~ "111" }
+      assert_equal ["aaa", "bbb"], select_keys(users) { |record| record.favorites.text =~ "222" }
+      assert_equal [], select_keys(users) { |record| record.favorites.text =~ "333" }
+
+      # assert_equal ["aaa", "ccc"], select_keys(users) { |record| record.favorites.text == "111" }      # TODO ==だと動かない
+      # assert_equal ["aaa", "ccc"], select_keys(users) { |record| record.favorites.author == "bbb" } # TODO 正しく動かない
+    end
+  end
+
+  def select_keys(table)
+    table.select { |record|
+      yield record
+    }.map { |record| record._key }.sort
+  end
+
 end

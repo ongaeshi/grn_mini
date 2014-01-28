@@ -41,12 +41,14 @@ module GrnMini
     end
     
     def value_type(value)
-      if value.is_a?(Time)
-        "Time"
+      if value.is_a?(TrueClass) || value.is_a?(FalseClass)
+        "Bool"
+      elsif value.is_a?(Integer)
+        "Int32"
       elsif value.is_a?(Float)
         "Float"
-      elsif value.is_a?(Numeric)
-        "Int32"
+      elsif value.is_a?(Time)
+        "Time"
       elsif value.is_a?(String)
         "ShortText"
       elsif value.is_a?(GrnMini::Table)

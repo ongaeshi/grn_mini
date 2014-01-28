@@ -227,6 +227,25 @@ class TestGrnMiniArray < MiniTest::Unit::TestCase
     end    
   end
 
+  def test_bool_column
+    GrnMini::tmpdb do
+      array = GrnMini::Array.new
+
+      array << {bool: true}
+      array << {bool: false}
+      array << {bool: false}
+
+      assert_equal true, array[1].bool
+      assert_equal false, array[2].bool
+
+      results = array.select { |r| r.bool == true }
+      assert_equal 1, results.size
+
+      results = array.select { |r| r.bool == false }
+      assert_equal 2, results.size
+    end    
+  end
+
   def test_record_attributes
     GrnMini::tmpdb do
       array = GrnMini::Array.new

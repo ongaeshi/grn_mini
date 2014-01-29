@@ -1,8 +1,8 @@
 # GrnMini
 
-Groonga(Rroonga) wrapper for use as the KVS.
+Groonga(Rroonga) wrapper for using easily.
 
-Groonga(Rroonga) for using easily. You can add the data in the column without specifying. You can easy to use and persistence, advanced search query, sort, grouping (drill down), snippets, and pagination. You can make an immediate search engine.
+You can add the data in the column without specifying. You can easy to use and persistence, advanced search query, sort, grouping (drill down), snippets, and pagination. You can make an immediate search engine. Cooperation between multiple tables.
 
 ## Installation
 
@@ -14,7 +14,8 @@ Groonga(Rroonga) for using easily. You can add the data in the column without sp
 
 ```ruby
 require 'grn_mini'
-array = GrnMini::Array.new("test.db")
+GrnMini::create_or_open("test.db")
+array = GrnMini::Array.new
 ```
 
 ### Add the record with the number column and text column.
@@ -37,14 +38,16 @@ array.size  #=> 3
 
 ```ruby
 require 'grn_mini'
-array = GrnMini::Array.new("test.db")
+GrnMini::create_or_open("test.db")
+array = GrnMini::Array.new
 array.size   #=> 3
 ```
 
 ### Create a temporary database. (Useful for testing)
 
 ```ruby
-GrnMini::Array.tmpdb do |array|
+GrnMini::tmpdb do
+  array = GrnMini::Array.new
   array << {text: "aaa", number: 1}
   array << {text: "bbb", number: 2}
   array << {text: "ccc", number: 3}
@@ -56,8 +59,8 @@ end
 
 ```ruby
 require 'grn_mini'
-
-hash = GrnMini::Hash.new("test.db")
+GrnMini::create_or_open("test.db")
+hash = GrnMini::Hash.new
 
 # Add
 hash["a"] = {text:"aaa", number:1}
@@ -74,7 +77,8 @@ hash["b"].text = "BBB"
 ## Data Type
 
 ```ruby
-GrnMini::Array.tmpdb do |array|
+GrnMini::tmpdb do
+  array = GrnMini::Array.new
   array << {filename: "a.txt", int: 1, float: 1.5, time: Time.at(1999)}
   array << {filename: "b.doc", int: 2, float: 2.5, time: Time.at(2000)}
 
@@ -105,7 +109,8 @@ See also [8.4. Data type — Groonga documentation](http://groonga.org/docs/refe
 ```ruby
 require 'grn_mini'
 
-array = GrnMini::Array.new("test2.db")
+GrnMini::create_or_open("test2.db")
+array = GrnMini::Array.new
 array << {name:"Tanaka",  age: 11, height: 162.5}
 array << {name:"Suzuki",  age: 31, height: 170.0}
 ```
@@ -156,7 +161,9 @@ array.first.attributes  #=> {"_id"=>2, "age"=>31, "height"=>170.0, "name"=>"Haya
 It is also possible to pass the block.
 
 ```ruby
-GrnMini::Array.tmpdb do |array|
+GrnMini::tmpdb do
+  array = GrnMini::Array.new
+
   array << {name:"Tanaka",  age: 11, height: 162.5}
   array << {name:"Suzuki",  age: 31, height: 170.0}
   array << {name:"Hayashi", age: 20, height: 165.0}
@@ -173,41 +180,44 @@ end
 ## Search
 
 Use GrnMini::Array#select method.
-`:text` column is set to the `:default_column` implicitly.
 
 ```ruby
-GrnMini::Array.tmpdb do |array|
+GrnMini::tmpdb do
+  array = GrnMini::Array.new
+
   array << {text:"aaa", number:1}
   array << {text:"bbb", number:20}
   array << {text:"bbb ccc", number:2}
   array << {text:"bbb", number:15}
   array << {text:"ccc", number:3}
 
-  results = array.select("aaa")
+  results = array.select("text:aaa")
   results.map {|record| record.attributes} #=> [{"_id"=>1, "_key"=>{"_id"=>1, "number"=>1, "text"=>"aaa"}, "_score"=>1}]
 
   # AND
-  results = array.select("bbb ccc")
+  results = array.select("text:@bbb text:@ccc")
   results.map {|record| record.attributes} #=> [{"_id"=>2, "_key"=>{"_id"=>3, "number"=>2, "text"=>"bbb ccc"}, "_score"=>2}]
 
   # Specify column
-  results = array.select("bbb number:<10")
+  results = array.select("text:@bbb number:<10")
   results.map {|record| record.attributes} #=> [{"_id"=>2, "_key"=>{"_id"=>3, "number"=>2, "text"=>"bbb ccc"}, "_score"=>2}]
 
   # AND, OR, Grouping
-  results = array.select("bbb (number:<= 10 OR number:>=20)")
+  results = array.select("text:@bbb (number:<= 10 OR number:>=20)")
   results.map {|record| record.attributes} #=> [{"_id"=>2, "_key"=>{"_id"=>3, "number"=>2, "text"=>"bbb ccc"}, "_score"=>2}, {"_id"=>4, "_key"=>{"_id"=>2, "number"=>20, "text"=>"bbb"}, "_score"=>2}]
 
   # NOT
-  results = array.select("bbb - ccc")
+  results = array.select("text:@bbb - text:@ccc")
   results.map {|record| record.attributes}  #=> [{"_id"=>1, "_key"=>{"_id"=>2, "number"=>20, "text"=>"bbb"}, "_score"=>1}, {"_id"=>3, "_key"=>{"_id"=>4, "number"=>15, "text"=>"bbb"}, "_score"=>1}]
 end 
 ```
 
-Change `:default_column` to `:filename` column.
+Use `:default_column` option.
 
 ```ruby
-GrnMini::Array.tmpdb do |array|
+GrnMini::tmpdb do
+  array = GrnMini::Array.new
+
   array << {text: "txt", filename:"a.txt"}
   array << {text: "txt", filename:"a.doc"}
   array << {text: "txt", filename:"a.rb"}

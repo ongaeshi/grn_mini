@@ -2,7 +2,15 @@
 
 Groonga(Rroonga) wrapper for using easily.
 
-You can add the data in the column without specifying. You can easy to use and persistence, advanced search query, sort, grouping (drill down), snippets, and pagination. You can make an immediate search engine. Cooperation between multiple tables.
+- Automatic generation of the column with data type
+- Specification of column types explicitly
+- Cooperation between multiple tables
+- Advanced Search Query
+- Persistence
+- Sort
+- Grouping (Drill Down)
+- Snippets
+- Pagination
 
 ## Installation
 
@@ -15,7 +23,6 @@ You can add the data in the column without specifying. You can easy to use and p
 ```ruby
 require 'grn_mini'
 GrnMini::create_or_open("test.db")
-array = GrnMini::Array.new
 ```
 
 ### Add the record with the number column and text column.
@@ -23,6 +30,7 @@ array = GrnMini::Array.new
 Determine the column type when you first call "GrnMini::Array#add". (Add inverted index if data type is "string".)
 
 ```ruby
+array = GrnMini::Array.new
 array.add(text: "aaa", number: 1)
 ```
 
@@ -239,7 +247,9 @@ See also [8.10.1. Query syntax](http://groonga.org/docs/reference/grn_expr/query
 Specify column name to sort.
 
 ```ruby
-GrnMini::Array.tmpdb do |array|
+GrnMini::tmpdb do
+  array = GrnMini::Array.new
+
   array << {name:"Tanaka",  age: 11, height: 162.5}
   array << {name:"Suzuki",  age: 31, height: 170.0}
   array << {name:"Hayashi", age: 21, height: 175.4}
@@ -273,7 +283,9 @@ sorted.map {|r| {name: r.name, age: r.age}}
 Drill down aka.
 
 ```ruby
-GrnMini::Array.tmpdb do |array| 
+GrnMini::tmpdb do
+  array = GrnMini::Array.new
+
   array << {text:"aaaa.txt", suffix:"txt", type:1}
   array << {text:"aaaa.doc", suffix:"doc", type:2}
   array << {text:"aabb.txt", suffix:"txt", type:2}
@@ -289,13 +301,15 @@ end
 Grouping from selection results.
 
 ```ruby
-GrnMini::Array.tmpdb do |array|
+GrnMini::tmpdb do
+  array = GrnMini::Array.new
+
   array << {text:"aaaa", suffix:"txt"}
   array << {text:"aaaa", suffix:"doc"}
   array << {text:"aaaa", suffix:"txt"}
   array << {text:"cccc", suffix:"txt"}
 
-  results = array.select("aa")
+  results = array.select("text:@aa")
   groups = GrnMini::Util::group_with_sort(results, "suffix")
 
   groups.size                               #=> 2
@@ -310,7 +324,9 @@ Display of keyword surrounding text. It is often used in search engine.
 Use `GrnMini::Util::text_snippet_from_selection_results`.
 
 ```ruby
-GrnMini::Array.tmpdb do |array|
+GrnMini::tmpdb do
+  array = GrnMini::Array.new
+
   array << {text: <<EOF, filename: "aaa.txt"}
 [1] This is a pen pep pea pek pet.
 ------------------------------
@@ -324,7 +340,7 @@ GrnMini::Array.tmpdb do |array|
 ------------------------------
 EOF
 
-  results = array.select("This pen")
+  results = array.select("text:@This pen")
   snippet = GrnMini::Util::text_snippet_from_selection_results(results)
 
   record = results.first
@@ -338,14 +354,16 @@ end
 `GrnMini::Util::html_snippet_from_selection_results` is HTML escaped.
 
 ```ruby
-GrnMini::Array.tmpdb do |array|
+GrnMini::tmpdb do
+  array = GrnMini::Array.new
+
   array << {text: <<EOF, filename: "aaa.txt"}
 <html>
   <div>This is a pen pep pea pek pet.</div>
 </html>
 EOF
 
-  results = array.select("This pen")
+  results = array.select("text:@This pen")
   snippet = GrnMini::Util::html_snippet_from_selection_results(results, '<span class="strong">', '</span>') # Default value is '<strong>', '</strong>'
 
   record = results.first
@@ -362,7 +380,9 @@ See also [Groonga::Expression#snippet](http://ranguba.org/rroonga/en/Groonga/Exp
  #paginate is more convenient than #sort if you want a pagination.
 
 ```ruby
-GrnMini::Array.tmpdb do |array|
+GrnMini::tmpdb do
+  array = GrnMini::Array.new
+
   array << {text: "aaaa", filename: "1.txt"}
   array << {text: "aaaa aaaa", filename: "2a.txt"}
   array << {text: "aaaa aaaa aaaa", filename: "3.txt"}
@@ -372,7 +392,7 @@ GrnMini::Array.tmpdb do |array|
   array << {text: "aaaa aaaa", filename: "2e.txt"}
   array << {text: "aaaa aaaa", filename: "2f.txt"}
 
-  results = array.select("aaaa")
+  results = array.select("text:@aaaa")
 
   # -- page1 --
   page_entries = results.paginate([["_score", :desc]], :page => 1, :size => 5)

@@ -4,13 +4,13 @@ Groonga(Rroonga) wrapper for using easily.
 
 - Automatic generation of the column with data type
 - Specification of column types explicitly
-- Cooperation between multiple tables
 - Advanced Search Query
 - Persistence
 - Sort
 - Grouping (Drill Down)
 - Snippets
 - Pagination
+- Cooperation between multiple tables
 
 ## Installation
 
@@ -81,6 +81,52 @@ hash["b"].text       #=> "bbb"
 # Write
 hash["b"].text = "BBB"
 ```
+
+## Specify table name.
+Default table name is "Array"(GrnMini::Array) or "Hash"(GrnMini::Hash).
+
+```ruby
+GrnMini::tmpdb do
+  array = GrnMini::Array.new("Users")
+  array << {text: "aaa", number: 1}
+end
+```
+
+## Specification of column types explicitly
+
+Use GrnMini::Table#setup_columns.
+
+```ruby
+GrnMini::tmpdb do
+  array = GrnMini::Array.new
+
+  # Specify dummy data
+  array.setup_columns(filename: "",
+                      int:      0,
+                      float:    0.0,
+                      time:     Time.new,
+                      )
+                      
+  array << {filename: "a.txt", int: 1, float: 1.5, time: Time.at(1999)}
+end
+```
+
+The following is the same meaning.
+
+```ruby
+GrnMini::tmpdb do
+  array = GrnMini::Array.new
+  # Automatic generation of the column with data type
+  array << {filename: "a.txt", int: 1, float: 1.5, time: Time.at(1999)}
+end
+```
+
+GrnMini::Table#setup_columns is useful for below.
+
+- Specification of column types explicitly
+- Refer to itself
+- Cross-reference between tables
+  - See "Cooperation between multiple tables"
 
 ## Data Type
 
@@ -425,3 +471,38 @@ end
 
 See also [Groonga::Table#pagenate](http://ranguba.org/rroonga/en/Groonga/Table.html#paginate-instance_method)
 
+## Cooperation between multiple tables
+
+Micro blog sample.
+
+```ruby
+GrnMini::tmpdb do
+  users = GrnMini::Hash.new("Users")
+  articles = GrnMini::Hash.new("Articles")
+
+  users.setup_columns(name: "", favorites: [articles])
+  articles.setup_columns(author: users, text: "")
+
+  users["aaa"] = {name: "Mr.A"}
+  users["bbb"] = {name: "Mr.B"}
+  users["ccc"] = {name: "Mr.C"}
+
+  articles["aaa:1"] = {author: "aaa", text: "111"}
+  articles["aaa:2"] = {author: "aaa", text: "222"}
+  articles["aaa:3"] = {author: "aaa", text: "333"}
+  articles["bbb:1"] = {author: "bbb", text: "111"}
+  articles["bbb:2"] = {author: "bbb", text: "222"}
+  articles["ccc:1"] = {author: "ccc", text: "111"}
+
+  users["aaa"].favorites = ["aaa:1", "bbb:2"]
+  users["bbb"].favorites = ["aaa:2"]
+  users["ccc"].favorites = ["aaa:1", "bbb:1", "ccc:1"]
+
+  # Search record.favorites
+  users.select { |record| record.favorites == "aaa:1" }    #=> ["aaa", "ccc"]
+  users.select { |record| record.favorites == "aaa:2" }  #=> ["bbb"]
+
+  # Search record.favorites.text
+  users.select { |record| record.favorites.text =~ "111" } #=> ["aaa", "ccc"]
+end
+```

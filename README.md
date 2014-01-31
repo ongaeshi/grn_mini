@@ -480,8 +480,13 @@ GrnMini::tmpdb do
   users = GrnMini::Hash.new("Users")
   articles = GrnMini::Hash.new("Articles")
 
-  users.setup_columns(name: "", favorites: [articles])
-  articles.setup_columns(author: users, text: "")
+  users.setup_columns(name: "",
+                      favorites: [articles]
+                      )
+
+  articles.setup_columns(author: users,
+                         text: ""
+                         )
 
   users["aaa"] = {name: "Mr.A"}
   users["bbb"] = {name: "Mr.B"}

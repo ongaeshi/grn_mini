@@ -11,31 +11,64 @@ module GrnMini
     def initialize(name, grn)
       @name = name
       @grn  = grn
-      @terms = Groonga["Terms"] || Groonga::PatriciaTrie.create(name: "Terms", key_normalize: true, default_tokenizer: "TokenBigramSplitSymbolAlphaDigit")
+      # @terms = Groonga["Terms"] || Groonga::PatriciaTrie.create(name: "Terms", key_normalize: true, default_tokenizer: "TokenBigramSplitSymbolAlphaDigit")
       @setup_columns_once = false
     end
 
     def setup_columns(hash)
-      hash.each do |key, value|
-        column = key.to_s
+      Groonga::Schema.define do |schema|
+        schema.create_table(@name,
+                            type: :hash # @todo Support array
+                            ) do |table|
+          hash.each do |key, value|
+            column = key.to_s
 
-        if value.is_a?(String)
-          @grn.define_column(column, value_type(value))
-          @terms.define_index_column("#{@name}_#{column}", @grn, source: "#{@name}.#{column}", with_position: true)
-        elsif value.is_a?(::Array)
-          @grn.define_column(column, value_type(value), type: :vector)
+            if value.is_a?(String)
+              table.short_text(column)
+              # @grn.define_column(column, value_type(value))
 
-          elem = value.first
-          
-          if elem.is_a?(GrnMini::Table)
-            elem.grn.define_index_column("index_#{column}", @grn, source: "#{@grn.name}.#{column}")
-          elsif elem.is_a?(Groonga::Table)
-            elem.define_index_column("index_#{column}", @grn, source: "#{@grn.name}.#{column}")
+            else
+              raise NotSupportColumnType, value
+            end
           end
-        else
-          @grn.define_column(column, value_type(value))
         end
+
+        schema.create_table("Terms",
+                            type: :patricia_trie,
+                            key_normalize: true,
+                            default_tokenizer: "TokenBigramSplitSymbolAlphaDigit" # @todo Support custom tokenizer
+                            ) do |table|
+          hash.each do |key, value|
+            column = key.to_s
+
+            if value.is_a?(String)
+              table.index("#{@name}.#{column}", with_position: true)
+            end
+          end
+        end
+        
       end
+
+      # hash.each do |key, value|
+      #   column = key.to_s
+
+      #   if value.is_a?(String)
+      #     @grn.define_column(column, value_type(value))
+      #     @terms.define_index_column("#{@name}_#{column}", @grn, source: "#{@name}.#{column}", with_position: true)
+      #   elsif value.is_a?(::Array)
+      #     @grn.define_column(column, value_type(value), type: :vector)
+
+      #     elem = value.first
+          
+      #     if elem.is_a?(GrnMini::Table)
+      #       elem.grn.define_index_column("index_#{column}", @grn, source: "#{@grn.name}.#{column}")
+      #     elsif elem.is_a?(Groonga::Table)
+      #       elem.define_index_column("index_#{column}", @grn, source: "#{@grn.name}.#{column}")
+      #     end
+      #   else
+      #     @grn.define_column(column, value_type(value))
+      #   end
+      # end
 
       @setup_columns_once = true
     end

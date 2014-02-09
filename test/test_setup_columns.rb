@@ -30,4 +30,20 @@ class TestSetupColumns < MiniTest::Unit::TestCase
       assert_equal "bbb", results.first.text
     end
   end
+
+  def test_number
+    GrnMini::tmpdb do
+      array = GrnMini::Array.new
+
+      array << {text:"aaa", number: 1}
+      array << {text:"bbb", number: 2}
+      array << {text:"ccc", number: 3}
+
+      results = array.select("text:@bb")
+
+      assert_equal 1, results.size
+      assert_equal "bbb", results.first.text
+    end
+  end
+
 end

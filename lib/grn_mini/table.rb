@@ -21,14 +21,7 @@ module GrnMini
                             ) do |table|
           hash.each do |key, value|
             column = key.to_s
-
-            if value.is_a?(String)
-              table.short_text(column)
-              # @grn.define_column(column, value_type(value))
-
-            else
-              raise NotSupportColumnType, value
-            end
+            table.send(method_name(value), column)
           end
         end
 
@@ -73,6 +66,28 @@ module GrnMini
       @setup_columns_once = true
     end
     
+    def method_name(value)
+      if value.is_a?(TrueClass) || value.is_a?(FalseClass)
+        "Bool"
+      elsif value.is_a?(Integer)
+        "integer32"
+      elsif value.is_a?(Float)
+        "Float"
+      elsif value.is_a?(Time)
+        "Time"
+      elsif value.is_a?(String)
+        "short_text"
+      elsif value.is_a?(GrnMini::Table)
+        value.grn.name
+      elsif value.is_a?(Groonga::Table)
+        value.name
+      elsif value.is_a?(::Array)
+        value_type(value.first)
+      else
+        raise NotSupportColumnType, value
+      end
+    end
+
     def value_type(value)
       if value.is_a?(TrueClass) || value.is_a?(FalseClass)
         "Bool"

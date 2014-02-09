@@ -16,6 +16,8 @@ Groonga(Rroonga) wrapper for using easily.
 
     $ gem install grn_mini
 
+When you faild to install Rroonga, Please refer -> [File: install — rroonga - Ranguba](http://ranguba.org/rroonga/en/file.install.html)
+
 ## Basic Usage
 
 ### Create a database with the name "test.db".

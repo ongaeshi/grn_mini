@@ -8,17 +8,16 @@ module GrnMini
     attr_accessor :grn
     include Enumerable
 
-    def initialize(name, grn)
+    def initialize(name, type)
       @name = name
-      @grn  = grn
-      # @terms = Groonga["Terms"] || Groonga::PatriciaTrie.create(name: "Terms", key_normalize: true, default_tokenizer: "TokenBigramSplitSymbolAlphaDigit")
+      @type = type
       @setup_columns_once = false
     end
 
     def setup_columns(hash)
       Groonga::Schema.define do |schema|
         schema.create_table(@name,
-                            type: :hash # @todo Support array
+                            type: @type
                             ) do |table|
           hash.each do |key, value|
             column = key.to_s
@@ -46,8 +45,9 @@ module GrnMini
             end
           end
         end
-        
       end
+
+      @grn = Groonga[@name]
 
       # hash.each do |key, value|
       #   column = key.to_s

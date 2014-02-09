@@ -12,7 +12,22 @@ class TestSetupColumns < MiniTest::Unit::TestCase
       hash["b"] = {name: "bbb"}
       hash["c"] = {name: "aaa bbb ccc"}
 
-      10000.times { assert_equal 1, hash.select("name:@ccc").size }
+      assert_equal 1, hash.select("name:@ccc").size
+    end
+  end
+
+  def test_array
+    GrnMini::tmpdb do
+      array = GrnMini::Array.new
+
+      array << {text:"aaa"}
+      array << {text:"bbb"}
+      array << {text:"ccc"}
+
+      results = array.select("text:@bb")
+
+      assert_equal 1, results.size
+      assert_equal "bbb", results.first.text
     end
   end
 end

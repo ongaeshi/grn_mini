@@ -3,8 +3,7 @@ require 'grn_mini/table'
 module GrnMini
   class Hash < Table
     def initialize(name = "Hash")
-      super(name,
-            Groonga[name] || Groonga::Hash.create(name: name, persistent: true))
+      super(name, :hash)
     end
 
     def add(key, values)

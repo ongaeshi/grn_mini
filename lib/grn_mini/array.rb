@@ -5,8 +5,7 @@ module GrnMini
 
   class Array < Table
     def initialize(name = "Array")
-      super(name,
-            Groonga[name] || Groonga::Array.create(name: name, persistent: true))
+      super(name, :array)
     end
 
     def add(hash)

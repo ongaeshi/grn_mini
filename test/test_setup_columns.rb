@@ -35,7 +35,7 @@ class TestSetupColumns < MiniTest::Unit::TestCase
     GrnMini::tmpdb do
       array = GrnMini::Array.new
 
-      array << {text:"aaa", number: 1}
+      array << {text:"aaa", number: 1, float: 1.5, time: Time.at(1) }
       array << {text:"bbb", number: 2}
       array << {text:"ccc", number: 3}
 

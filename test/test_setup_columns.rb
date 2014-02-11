@@ -45,5 +45,25 @@ class TestSetupColumns < MiniTest::Unit::TestCase
       assert_equal "bbb", results.first.text
     end
   end
+  
+  def test_table
+    GrnMini::tmpdb do
+      array = GrnMini::Array.new
+      array2 = GrnMini::Array.new("A2")
+
+      array.setup_columns(n: 0)
+      array2.setup_columns(parent: array)
+
+      array << {n: 1}
+      array << {n: 2}
+      array << {n: 3}
+      array << {n: 4}
+
+      array2 << {parent:  array[1]}
+      array2 << {parent:  array[2]}
+      array2 << {parent:  array[3]}
+
+    end
+  end
 
 end

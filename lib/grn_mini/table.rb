@@ -8,28 +8,23 @@ module GrnMini
     attr_accessor :grn
     include Enumerable
 
-    def initialize(name, type)
+    def initialize(name, grn)
       @name = name
-      @type = type
+      @grn  = grn
+      @terms = Groonga["Terms"] || Groonga::PatriciaTrie.create(name: "Terms", key_normalize: true, default_tokenizer: "TokenBigramSplitSymbolAlphaDigit")
       @setup_columns_once = false
     end
 
     def setup_columns(hash)
       Groonga::Schema.define do |schema|
-        schema.create_table(@name,
-                            type: @type
-                            ) do |table|
+        schema.change_table(@name) do |table|
           hash.each do |key, value|
             column = key.to_s
             table.column(column, value_type(value))
           end
         end
 
-        schema.create_table("Terms",
-                            type: :patricia_trie,
-                            key_normalize: true,
-                            default_tokenizer: "TokenBigramSplitSymbolAlphaDigit" # @todo Support custom tokenizer
-                            ) do |table|
+        schema.change_table("Terms") do |table|
           hash.each do |key, value|
             column = key.to_s
 
@@ -39,8 +34,6 @@ module GrnMini
           end
         end
       end
-
-      @grn = Groonga[@name]
 
       # hash.each do |key, value|
       #   column = key.to_s

@@ -20,7 +20,12 @@ module GrnMini
         schema.change_table(@name) do |table|
           hash.each do |key, value|
             column = key.to_s
-            table.column(column, value_type(value))
+
+            if value.is_a?(::Array)
+              table.column(column, value_type(value), type: :vector)
+            else
+              table.column(column, value_type(value))
+            end
           end
         end
 

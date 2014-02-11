@@ -66,4 +66,11 @@ class TestSetupColumns < MiniTest::Unit::TestCase
     end
   end
 
+  def test_vector
+    GrnMini::tmpdb do
+      array = GrnMini::Array.new
+      array.setup_columns(vec: [""])
+    end
+  end
+
 end

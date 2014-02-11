@@ -38,28 +38,25 @@ module GrnMini
             end
           end
         end
-      end
 
-      # hash.each do |key, value|
-      #   column = key.to_s
-
-      #   if value.is_a?(String)
-      #     @grn.define_column(column, value_type(value))
-      #     @terms.define_index_column("#{@name}_#{column}", @grn, source: "#{@name}.#{column}", with_position: true)
-      #   elsif value.is_a?(::Array)
-      #     @grn.define_column(column, value_type(value), type: :vector)
-
-      #     elem = value.first
+        hash.each do |key, value|
+          column = key.to_s
           
-      #     if elem.is_a?(GrnMini::Table)
-      #       elem.grn.define_index_column("index_#{column}", @grn, source: "#{@grn.name}.#{column}")
-      #     elsif elem.is_a?(Groonga::Table)
-      #       elem.define_index_column("index_#{column}", @grn, source: "#{@grn.name}.#{column}")
-      #     end
-      #   else
-      #     @grn.define_column(column, value_type(value))
-      #   end
-      # end
+          if value.is_a?(::Array)
+            elem = value.first
+            
+            if elem.is_a?(GrnMini::Table)
+              schema.change_table(elem.grn.name) do |table|
+                table.index("#{@grn.name}.#{column}")
+              end
+            elsif elem.is_a?(Groonga::Table)
+              schema.change_table(elem.name) do |table|
+                table.index("#{@grn.name}.#{column}")
+              end
+            end
+          end
+        end
+      end
 
       @setup_columns_once = true
     end

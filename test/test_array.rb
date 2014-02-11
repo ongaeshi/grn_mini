@@ -1,6 +1,6 @@
 require 'minitest_helper'
 
-class TestGrnMiniArray < MiniTest::Test
+class TestArray < MiniTest::Test
   def test_initialize
     GrnMini::tmpdb do
       array = GrnMini::Array.new

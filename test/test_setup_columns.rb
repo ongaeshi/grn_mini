@@ -1,6 +1,6 @@
 require 'minitest_helper'
 
-class TestSetupColumns < MiniTest::Unit::TestCase
+class TestSetupColumns < MiniTest::Test
   def test_repeat_setup_columns
     GrnMini::tmpdb do
       hash = GrnMini::Hash.new

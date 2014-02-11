@@ -1,6 +1,6 @@
 require 'minitest_helper'
 
-class TestMicroBlog < MiniTest::Unit::TestCase
+class TestMicroBlog < MiniTest::Test
   def test_micro_blog
     GrnMini::tmpdb do
       engine = MicroBlog.new

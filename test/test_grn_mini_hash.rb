@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 require 'minitest_helper'
 
-class TestGrnMiniHash < MiniTest::Unit::TestCase
+class TestGrnMiniHash < MiniTest::Test
   def test_initialize
     GrnMini::tmpdb do
       hash = GrnMini::Hash.new

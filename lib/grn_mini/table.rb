@@ -15,6 +15,10 @@ module GrnMini
       @setup_columns_once = false
     end
 
+    def need_setup_columns?
+      !@setup_columns_once && empty?
+    end
+
     def setup_columns(hash)
       Groonga::Schema.define do |schema|
         schema.change_table(@name) do |table|

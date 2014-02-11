@@ -11,7 +11,7 @@ module GrnMini
     end
 
     def add(hash)
-      setup_columns(hash) unless @setup_columns_once
+      setup_columns(hash) if need_setup_columns?
       @grn.add(hash)
     end
 

@@ -9,7 +9,7 @@ module GrnMini
     end
 
     def add(key, values)
-      setup_columns(values) unless @setup_columns_once
+      setup_columns(values) if need_setup_columns?
       @grn.add(key, values)
     end
 

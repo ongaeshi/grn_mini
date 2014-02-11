@@ -1,5 +1,10 @@
 # HISTORY - grn_mini
 
+## 0.5 - 2014/02/11
+
+- Use Groonga::Schema
+  - Can use setup_columns when table column defined already.
+
 ## 0.4 - 2014/02/01
 
 - GrnMini

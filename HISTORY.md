@@ -3,7 +3,8 @@
 ## 0.5 - 2014/02/11
 
 - Use Groonga::Schema
-  - Can use setup_columns when table column defined already.
+  - Can use setup_columns when table column defined already
+- Put link to "Rroonga Install Manual"
 
 ## 0.4 - 2014/02/01
 

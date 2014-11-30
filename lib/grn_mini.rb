@@ -17,9 +17,15 @@ module GrnMini
   end
 
   def tmpdb
-    Dir.mktmpdir do |dir|
+    if block_given?
+      Dir.mktmpdir do |dir|
+        create_or_open(File.join(dir, "tmp.db"))
+        yield
+      end
+    else
+      dir = Dir.mktmpdir
       create_or_open(File.join(dir, "tmp.db"))
-      yield
+      dir
     end
   end
 end

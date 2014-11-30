@@ -65,6 +65,21 @@ end
 # Delete temporary database
 ```
 
+or
+
+```ruby
+require 'fileutils'
+
+dir = GrnMini::tmpdb
+
+array = GrnMini::Array.new
+array << {text: "aaa", number: 1}
+array << {text: "bbb", number: 2}
+array << {text: "ccc", number: 3}
+
+FileUtils.remove_entry_secure dir # Delete temporary database
+```
+
 ## Create Hash
 
 ```ruby

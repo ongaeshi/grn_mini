@@ -1,5 +1,12 @@
 # HISTORY - grn_mini
 
+## 0.6 - 2014/11/30
+
+- GrnMini::tmpdb can be used in non-block
+- Customize default tokenizer
+  - GrnMini::default_tokenizer()
+  - GrnMnini::default_tokenizer()=
+
 ## 0.5 - 2014/02/11
 
 - Use Groonga::Schema

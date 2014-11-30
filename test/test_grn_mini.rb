@@ -19,4 +19,16 @@ class TestGrnMini < MiniTest::Test
 
     FileUtils.remove_entry_secure dir
   end
+
+  def test_default_tokenizer
+    prev = GrnMini::default_tokenizer
+    GrnMini::default_tokenizer = "TokenBigramIgnoreBlank"
+    assert_equal "TokenBigramIgnoreBlank", GrnMini::default_tokenizer
+
+    GrnMini::tmpdb do
+      array = GrnMini::Array.new
+    end
+
+    GrnMini::default_tokenizer = prev
+  end
 end

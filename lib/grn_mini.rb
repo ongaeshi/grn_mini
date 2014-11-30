@@ -28,4 +28,12 @@ module GrnMini
       dir
     end
   end
+
+  def default_tokenizer
+    @default_tokenizer || "TokenBigramSplitSymbolAlphaDigit"
+  end
+
+  def default_tokenizer=(tokenizer)
+    @default_tokenizer = tokenizer
+  end
 end

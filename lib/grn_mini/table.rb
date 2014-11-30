@@ -11,7 +11,7 @@ module GrnMini
     def initialize(name, grn)
       @name = name
       @grn  = grn
-      @terms = Groonga["Terms"] || Groonga::PatriciaTrie.create(name: "Terms", key_normalize: true, default_tokenizer: "TokenBigramSplitSymbolAlphaDigit")
+      @terms = Groonga["Terms"] || Groonga::PatriciaTrie.create(name: "Terms", key_normalize: true, default_tokenizer: GrnMini::default_tokenizer)
       @setup_columns_once = false
     end
 
